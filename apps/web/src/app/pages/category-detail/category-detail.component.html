@@ -1,0 +1,59 @@
+<section class="page-header">
+  <div class="container">
+    <a routerLink="/categories" class="back-link">
+      <span class="material-icons-outlined">arrow_back</span>
+      All Categories
+    </a>
+    @if (category(); as cat) {
+      <h1>{{ cat.name }}</h1>
+      <p class="text-muted">{{ cat.services.length }} services available</p>
+    }
+  </div>
+</section>
+
+<section class="container">
+  @if (loading()) {
+    <div class="services-list">
+      @for (i of [1,2,3]; track i) {
+        <div class="skeleton" style="height: 180px; border-radius: var(--radius-lg)"></div>
+      }
+    </div>
+  } @else if (category(); as cat) {
+    @if (cat.services.length === 0) {
+      <div class="empty">
+        <span class="material-icons-outlined">search_off</span>
+        <h3>No services yet</h3>
+        <p class="text-muted">No professionals have listed services in this category yet.</p>
+      </div>
+    } @else {
+      <div class="services-list">
+        @for (svc of cat.services; track svc.id) {
+          <div class="service-card card card--hover">
+            <div class="service-card__body">
+              <div class="service-card__info">
+                <h3 class="service-card__name">{{ svc.name }}</h3>
+                <p class="service-card__desc">{{ svc.description }}</p>
+                <div class="service-card__meta">
+                  <span class="service-card__duration">
+                    <span class="material-icons-outlined">schedule</span>
+                    {{ svc.durationMinutes }} min
+                  </span>
+                  @if (svc.master) {
+                    <a [routerLink]="['/masters', svc.master.id]" class="service-card__master">
+                      <span class="material-icons-outlined">person</span>
+                      {{ svc.master.firstName }} {{ svc.master.lastName }}
+                    </a>
+                  }
+                </div>
+              </div>
+              <div class="service-card__action">
+                <span class="service-card__price">&euro;{{ svc.price }}</span>
+                <a [routerLink]="['/booking', svc.id]" class="btn btn--primary btn--sm">Book Now</a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</section>

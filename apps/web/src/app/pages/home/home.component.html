@@ -1,0 +1,93 @@
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <h1 class="hero__title">
+      Find a trusted <span class="hero__highlight">craftsman</span><br />
+      near you
+    </h1>
+    <p class="hero__subtitle">
+      Browse verified professionals, compare prices, and book services — all in one place.
+    </p>
+    <div class="hero__cta">
+      <a routerLink="/categories" class="btn btn--primary btn--lg">
+        <span class="material-icons-outlined">search</span>
+        Browse Services
+      </a>
+      <a routerLink="/auth/register" class="btn btn--secondary btn--lg">
+        Join as Master
+      </a>
+    </div>
+    <div class="hero__stats">
+      <div class="hero__stat">
+        <span class="hero__stat-number">10+</span>
+        <span class="hero__stat-label">Categories</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-number">Fast</span>
+        <span class="hero__stat-label">Booking</span>
+      </div>
+      <div class="hero__stat">
+        <span class="hero__stat-number">Free</span>
+        <span class="hero__stat-label">For Clients</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="categories">
+  <div class="container">
+    <h2 class="section-title">Popular Services</h2>
+    <p class="section-subtitle">Choose a category to find the right professional</p>
+
+    @if (loading()) {
+      <div class="categories__grid">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="category-card skeleton" style="height: 140px"></div>
+        }
+      </div>
+    } @else {
+      <div class="categories__grid">
+        @for (cat of categories(); track cat.id) {
+          <a [routerLink]="['/categories', cat.slug]" class="category-card card card--hover">
+            <div class="category-card__icon">
+              <span class="material-icons-outlined">{{ cat.icon || 'build' }}</span>
+            </div>
+            <h3 class="category-card__name">{{ cat.name }}</h3>
+            <span class="category-card__count">{{ cat._count.services }} services</span>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="how-it-works">
+  <div class="container">
+    <h2 class="section-title">How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step__icon">
+          <span class="material-icons-outlined">search</span>
+        </div>
+        <h3 class="step__title">1. Find</h3>
+        <p class="step__text">Browse categories and find the service you need</p>
+      </div>
+      <div class="step">
+        <div class="step__icon">
+          <span class="material-icons-outlined">calendar_today</span>
+        </div>
+        <h3 class="step__title">2. Book</h3>
+        <p class="step__text">Choose a convenient time and submit your request</p>
+      </div>
+      <div class="step">
+        <div class="step__icon">
+          <span class="material-icons-outlined">check_circle</span>
+        </div>
+        <h3 class="step__title">3. Done</h3>
+        <p class="step__text">The master confirms and completes the job</p>
+      </div>
+    </div>
+  </div>
+</section>

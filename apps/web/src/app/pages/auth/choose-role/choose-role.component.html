@@ -1,0 +1,36 @@
+<div class="role-page">
+  <div class="role-card">
+    <h1>How will you use Majster.sk?</h1>
+    <p class="text-muted mb-3">You can change this later in settings</p>
+
+    <div class="role-options">
+      <button
+        class="role-option"
+        [class.role-option--selected]="selectedRole() === 'CLIENT'"
+        (click)="selectRole('CLIENT')"
+      >
+        <span class="role-option__icon material-icons-outlined">person_search</span>
+        <h3>I'm looking for a master</h3>
+        <p>Browse services and book professionals</p>
+      </button>
+
+      <button
+        class="role-option"
+        [class.role-option--selected]="selectedRole() === 'MASTER'"
+        (click)="selectRole('MASTER')"
+      >
+        <span class="role-option__icon material-icons-outlined">engineering</span>
+        <h3>I'm a master</h3>
+        <p>Offer your services and get clients</p>
+      </button>
+    </div>
+
+    <button
+      class="btn btn--primary btn--lg btn--full mt-3"
+      [disabled]="!selectedRole() || loading()"
+      (click)="confirm()"
+    >
+      {{ loading() ? 'Setting up...' : 'Continue' }}
+    </button>
+  </div>
+</div>

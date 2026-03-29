@@ -1,0 +1,103 @@
+import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs';
+
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  phone?: string;
+  avatar?: string;
+  bio?: string;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  user: User;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AuthService {
+  private currentUser = signal<User | null>(null);
+
+  user = this.currentUser.asReadonly();
+  isLoggedIn = computed(() => !!this.currentUser());
+  isMaster = computed(() => this.currentUser()?.role === 'MASTER');
+
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    this.loadUser();
+  }
+
+  register(dto: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }) {
+    return this.http
+      .post<AuthResponse>('/api/auth/register', dto)
+      .pipe(tap((res) => this.handleAuth(res)));
+  }
+
+  login(dto: { email: string; password: string }) {
+    return this.http
+      .post<AuthResponse>('/api/auth/login', dto)
+      .pipe(tap((res) => this.handleAuth(res)));
+  }
+
+  loginWithGoogle() {
+    window.location.href = '/api/auth/google';
+  }
+
+  handleGoogleCallback(token: string) {
+    localStorage.setItem('accessToken', token);
+    this.loadUser();
+  }
+
+  updateRole(role: string) {
+    return this.http
+      .patch<AuthResponse>('/api/auth/role', { role })
+      .pipe(tap((res) => this.handleAuth(res)));
+  }
+
+  updateProfile(dto: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    bio?: string;
+  }) {
+    return this.http
+      .patch<User>('/api/auth/profile', dto)
+      .pipe(tap((user) => this.currentUser.set(user)));
+  }
+
+  logout() {
+    localStorage.removeItem('accessToken');
+    this.currentUser.set(null);
+    this.router.navigate(['/']);
+  }
+
+  private handleAuth(res: AuthResponse) {
+    localStorage.setItem('accessToken', res.accessToken);
+    this.currentUser.set(res.user);
+  }
+
+  private loadUser() {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      this.http.get<User>('/api/auth/me').subscribe({
+        next: (user) => this.currentUser.set(user),
+        error: () => {
+          localStorage.removeItem('accessToken');
+          this.currentUser.set(null);
+        },
+      });
+    }
+  }
+}

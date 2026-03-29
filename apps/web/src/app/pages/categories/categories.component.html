@@ -1,0 +1,28 @@
+<section class="page-header">
+  <div class="container">
+    <h1>All Services</h1>
+    <p class="text-muted">Choose a category to find the right professional</p>
+  </div>
+</section>
+
+<section class="container">
+  @if (loading()) {
+    <div class="grid">
+      @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
+        <div class="skeleton" style="height: 160px; border-radius: var(--radius-lg)"></div>
+      }
+    </div>
+  } @else {
+    <div class="grid">
+      @for (cat of categories(); track cat.id) {
+        <a [routerLink]="['/categories', cat.slug]" class="cat-card card card--hover">
+          <div class="cat-card__icon">
+            <span class="material-icons-outlined">{{ cat.icon || 'build' }}</span>
+          </div>
+          <h3 class="cat-card__name">{{ cat.name }}</h3>
+          <span class="cat-card__count">{{ cat._count.services }} services available</span>
+        </a>
+      }
+    </div>
+  }
+</section>

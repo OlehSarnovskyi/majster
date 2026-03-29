@@ -1,0 +1,102 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  height: var(--header-height);
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 32px;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+    flex-shrink: 0;
+
+    &-icon {
+      font-size: 28px;
+      color: var(--color-primary);
+    }
+
+    &-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    &-dot {
+      color: var(--color-primary);
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+
+    a {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.938rem;
+      font-weight: 500;
+      color: var(--color-text-light);
+      text-decoration: none;
+      transition: all 0.2s;
+
+      &:hover {
+        color: var(--color-text);
+        background: rgba(0, 0, 0, 0.03);
+      }
+
+      &.active {
+        color: var(--color-primary);
+        background: rgba(13, 148, 136, 0.06);
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .material-icons-outlined {
+      font-size: 20px;
+      color: var(--color-primary);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header__nav {
+    display: none;
+  }
+}
