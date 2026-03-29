@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -49,7 +50,7 @@ export class AuthService {
       where: { email: dto.email },
     });
 
-    if (!user) {
+    if (!user || !user.password) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -62,6 +63,74 @@ export class AuthService {
     return this.buildAuthResponse(user);
   }
 
+  async googleLogin(googleUser: {
+    googleId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    avatar?: string;
+  }) {
+    let user = await this.prisma.user.findUnique({
+      where: { googleId: googleUser.googleId },
+    });
+
+    if (!user) {
+      user = await this.prisma.user.findUnique({
+        where: { email: googleUser.email },
+      });
+
+      if (user) {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            googleId: googleUser.googleId,
+            avatar: googleUser.avatar,
+          },
+        });
+      } else {
+        user = await this.prisma.user.create({
+          data: {
+            email: googleUser.email,
+            googleId: googleUser.googleId,
+            firstName: googleUser.firstName,
+            lastName: googleUser.lastName,
+            avatar: googleUser.avatar,
+          },
+        });
+      }
+    }
+
+    return this.buildAuthResponse(user);
+  }
+
+  async updateRole(userId: string, role: Role) {
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { role },
+    });
+    return this.buildAuthResponse(user);
+  }
+
+  async updateProfile(
+    userId: string,
+    dto: { firstName?: string; lastName?: string; phone?: string; bio?: string }
+  ) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: dto,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phone: true,
+        avatar: true,
+        bio: true,
+        role: true,
+      },
+    });
+  }
+
   async validateUser(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
@@ -70,6 +139,9 @@ export class AuthService {
         email: true,
         firstName: true,
         lastName: true,
+        phone: true,
+        avatar: true,
+        bio: true,
         role: true,
       },
     });
