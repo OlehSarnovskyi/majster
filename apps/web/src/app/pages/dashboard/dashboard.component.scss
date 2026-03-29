@@ -122,6 +122,54 @@ select.form-field__input {
   padding-right: 32px;
 }
 
+.my-services {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.svc-item__main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+
+  h3 { font-size: 1.063rem; margin-bottom: 4px; }
+  .text-muted { font-size: 0.875rem; margin-bottom: 8px; }
+}
+
+.svc-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.svc-item__price {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.svc-item__duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.813rem;
+  color: var(--color-text-muted);
+
+  .material-icons-outlined { font-size: 15px; }
+}
+
+.svc-item__actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.btn--danger {
+  color: var(--color-error);
+  &:hover { background: #FEF2F2; }
+}
+
 @media (max-width: 640px) {
   .dash-header { flex-direction: column; gap: 16px; align-items: flex-start; }
   .booking-card__main { flex-direction: column; }

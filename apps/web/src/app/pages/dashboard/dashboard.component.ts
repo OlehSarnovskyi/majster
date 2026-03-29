@@ -1,7 +1,12 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { ApiService, Booking, Category } from '../../core/services/api.service';
+import {
+  ApiService,
+  Booking,
+  Category,
+  Service,
+} from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 
@@ -18,6 +23,8 @@ export class DashboardComponent implements OnInit {
   activeTab = signal<'bookings' | 'services'>('bookings');
 
   // Master: manage services
+  myServices = signal<Service[]>([]);
+  loadingServices = signal(false);
   categories = signal<Category[]>([]);
   showServiceForm = signal(false);
   editingService = signal<string | null>(null);
@@ -44,6 +51,7 @@ export class DashboardComponent implements OnInit {
     this.loadBookings();
     if (this.auth.isMaster()) {
       this.api.getCategories().subscribe((cats) => this.categories.set(cats));
+      this.loadServices();
     }
   }
 
@@ -58,8 +66,23 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  loadServices() {
+    this.loadingServices.set(true);
+    const masterId = this.auth.user()?.id;
+    if (!masterId) return;
+    this.api.getServices({ masterId }).subscribe({
+      next: (s) => {
+        this.myServices.set(s);
+        this.loadingServices.set(false);
+      },
+      error: () => this.loadingServices.set(false),
+    });
+  }
+
   updateStatus(id: string, status: string) {
-    this.api.updateBookingStatus(id, status).subscribe(() => this.loadBookings());
+    this.api
+      .updateBookingStatus(id, status)
+      .subscribe(() => this.loadBookings());
   }
 
   statusClass(status: string): string {
@@ -74,6 +97,16 @@ export class DashboardComponent implements OnInit {
     this.svcPrice = 0;
     this.svcDuration = 60;
     this.svcCategoryId = this.categories()[0]?.id || '';
+    this.showServiceForm.set(true);
+  }
+
+  editService(svc: Service) {
+    this.editingService.set(svc.id);
+    this.svcName = svc.name;
+    this.svcDesc = svc.description;
+    this.svcPrice = Number(svc.price);
+    this.svcDuration = svc.durationMinutes;
+    this.svcCategoryId = svc.categoryId;
     this.showServiceForm.set(true);
   }
 
@@ -95,7 +128,7 @@ export class DashboardComponent implements OnInit {
       next: () => {
         this.showServiceForm.set(false);
         this.savingService.set(false);
-        this.loadBookings();
+        this.loadServices();
       },
       error: () => this.savingService.set(false),
     });
@@ -103,7 +136,7 @@ export class DashboardComponent implements OnInit {
 
   deleteService(id: string) {
     if (confirm('Delete this service?')) {
-      this.api.deleteService(id).subscribe(() => this.loadBookings());
+      this.api.deleteService(id).subscribe(() => this.loadServices());
     }
   }
 }
