@@ -13,10 +13,11 @@
 
     <div class="header__actions">
       @if (auth.isLoggedIn()) {
-        <a routerLink="/dashboard" class="header__user">
+        <a routerLink="/profile" class="header__user" title="Edit Profile">
           <span class="material-icons-outlined">person</span>
           <span>{{ auth.user()?.firstName }}</span>
         </a>
+        <a routerLink="/dashboard" class="btn btn--ghost btn--sm">Dashboard</a>
         <button class="btn btn--ghost btn--sm" (click)="auth.logout()">Log out</button>
       } @else {
         <a routerLink="/auth/login" class="btn btn--ghost btn--sm">Log in</a>

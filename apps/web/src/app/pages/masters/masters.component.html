@@ -1,0 +1,47 @@
+<section class="page-header">
+  <div class="container">
+    <h1>Masters</h1>
+    <p class="text-muted">Browse verified professionals</p>
+  </div>
+</section>
+
+<section class="container">
+  @if (loading()) {
+    <div class="grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="skeleton" style="height: 200px; border-radius: var(--radius-lg)"></div>
+      }
+    </div>
+  } @else if (masters().length === 0) {
+    <div class="empty">
+      <span class="material-icons-outlined">group_off</span>
+      <h3>No masters yet</h3>
+      <p class="text-muted">Be the first to join!</p>
+      <a routerLink="/auth/register" class="btn btn--primary mt-2">Register as Master</a>
+    </div>
+  } @else {
+    <div class="grid">
+      @for (m of masters(); track m.id) {
+        <a [routerLink]="['/masters', m.id]" class="master-card card card--hover">
+          <div class="card__body">
+            <div class="master-card__avatar">
+              @if (m.avatar) {
+                <img [src]="m.avatar" [alt]="m.firstName" />
+              } @else {
+                <span class="master-card__initials">{{ getInitials(m) }}</span>
+              }
+            </div>
+            <h3 class="master-card__name">{{ m.firstName }} {{ m.lastName }}</h3>
+            @if (m.bio) {
+              <p class="master-card__bio">{{ m.bio }}</p>
+            }
+            <span class="master-card__count">
+              <span class="material-icons-outlined">build</span>
+              {{ m._count?.services || 0 }} services
+            </span>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</section>

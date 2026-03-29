@@ -1,4 +1,5 @@
 import { Route } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -49,6 +50,13 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'masters',
+    loadComponent: () =>
+      import('./pages/masters/masters.component').then(
+        (m) => m.MastersComponent
+      ),
+  },
+  {
     path: 'masters/:id',
     loadComponent: () =>
       import('./pages/master-profile/master-profile.component').then(
@@ -57,6 +65,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'booking/:id',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/booking/booking.component').then(
         (m) => m.BookingComponent
@@ -64,9 +73,18 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'dashboard',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/dashboard/dashboard.component').then(
         (m) => m.DashboardComponent
+      ),
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/profile/profile.component').then(
+        (m) => m.ProfileComponent
       ),
   },
   { path: '**', redirectTo: '' },
