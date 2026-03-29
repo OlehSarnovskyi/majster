@@ -1,3 +1,2 @@
-export function shared(): string {
-  return 'shared';
-}
+export * from './interfaces/index.js';
+export * from './dto/index.js';
