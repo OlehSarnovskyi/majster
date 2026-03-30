@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -10,5 +10,15 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+  mobileMenuOpen = signal(false);
+
   constructor(public auth: AuthService) {}
+
+  toggleMenu() {
+    this.mobileMenuOpen.update((v) => !v);
+  }
+
+  closeMenu() {
+    this.mobileMenuOpen.set(false);
+  }
 }

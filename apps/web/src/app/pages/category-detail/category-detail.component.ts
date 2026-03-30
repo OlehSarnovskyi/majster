@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Category, Service } from '../../core/services/api.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-category-detail',
@@ -14,13 +15,14 @@ export class CategoryDetailComponent implements OnInit {
   category = signal<(Category & { services: Service[] }) | null>(null);
   loading = signal(true);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private seo: SeoService) {}
 
   ngOnInit() {
     this.api.getCategoryBySlug(this.slug()).subscribe({
       next: (cat) => {
         this.category.set(cat);
         this.loading.set(false);
+        this.seo.setPage(cat.name, `Find ${cat.name.toLowerCase()} services and professionals on Majster.sk`);
       },
       error: () => this.loading.set(false),
     });

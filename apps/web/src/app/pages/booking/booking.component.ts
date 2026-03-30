@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService, Service } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-booking',
@@ -25,7 +26,8 @@ export class BookingComponent implements OnInit {
   constructor(
     private api: ApiService,
     public auth: AuthService,
-    private router: Router
+    private router: Router,
+    private seo: SeoService
   ) {}
 
   ngOnInit() {
@@ -33,6 +35,7 @@ export class BookingComponent implements OnInit {
       next: (svc) => {
         this.service.set(svc);
         this.loading.set(false);
+        this.seo.setPage(`Book ${svc.name}`);
       },
       error: () => this.loading.set(false),
     });

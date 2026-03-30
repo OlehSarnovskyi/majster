@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Master } from '../../core/services/api.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-master-profile',
@@ -14,13 +15,17 @@ export class MasterProfileComponent implements OnInit {
   master = signal<Master | null>(null);
   loading = signal(true);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private seo: SeoService) {}
 
   ngOnInit() {
     this.api.getMaster(this.id()).subscribe({
       next: (m) => {
         this.master.set(m);
         this.loading.set(false);
+        this.seo.setPage(
+          `${m.firstName} ${m.lastName}`,
+          `${m.firstName} ${m.lastName} — professional craftsman on Majster.sk. ${m.services?.length || 0} services available.`
+        );
       },
       error: () => this.loading.set(false),
     });

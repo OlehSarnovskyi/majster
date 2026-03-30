@@ -1,6 +1,6 @@
 <header class="header">
   <div class="header__inner container">
-    <a routerLink="/" class="header__logo">
+    <a routerLink="/" class="header__logo" (click)="closeMenu()">
       <span class="header__logo-icon material-icons-outlined">handyman</span>
       <span class="header__logo-text">Majster<span class="header__logo-dot">.sk</span></span>
     </a>
@@ -24,5 +24,28 @@
         <a routerLink="/auth/register" class="btn btn--primary btn--sm">Sign up</a>
       }
     </div>
+
+    <button class="header__burger" (click)="toggleMenu()" [attr.aria-label]="mobileMenuOpen() ? 'Close menu' : 'Open menu'">
+      <span class="material-icons-outlined">{{ mobileMenuOpen() ? 'close' : 'menu' }}</span>
+    </button>
   </div>
 </header>
+
+<!-- Mobile menu overlay -->
+@if (mobileMenuOpen()) {
+  <div class="mobile-overlay" (click)="closeMenu()"></div>
+  <nav class="mobile-menu">
+    <a routerLink="/" (click)="closeMenu()">Home</a>
+    <a routerLink="/categories" (click)="closeMenu()">Services</a>
+    <a routerLink="/masters" (click)="closeMenu()">Masters</a>
+    <div class="mobile-menu__divider"></div>
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/dashboard" (click)="closeMenu()">Dashboard</a>
+      <a routerLink="/profile" (click)="closeMenu()">Profile</a>
+      <button class="mobile-menu__logout" (click)="auth.logout(); closeMenu()">Log out</button>
+    } @else {
+      <a routerLink="/auth/login" (click)="closeMenu()">Log in</a>
+      <a routerLink="/auth/register" (click)="closeMenu()">Sign up</a>
+    }
+  </nav>
+}

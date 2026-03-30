@@ -8,6 +8,7 @@ import {
   Service,
 } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
+import { SeoService } from '../../core/services/seo.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -44,10 +45,12 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    public auth: AuthService
+    public auth: AuthService,
+    private seo: SeoService
   ) {}
 
   ngOnInit() {
+    this.seo.setPage('Dashboard');
     this.loadBookings();
     if (this.auth.isMaster()) {
       this.api.getCategories().subscribe((cats) => this.categories.set(cats));

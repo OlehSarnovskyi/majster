@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-profile',
@@ -9,7 +10,7 @@ import { AuthService } from '../../core/services/auth.service';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   saving = signal(false);
   saved = signal(false);
   error = signal('');
@@ -19,7 +20,7 @@ export class ProfileComponent {
   phone = '';
   bio = '';
 
-  constructor(public auth: AuthService) {
+  constructor(public auth: AuthService, private seo: SeoService) {
     const u = this.auth.user();
     if (u) {
       this.firstName = u.firstName;
@@ -27,6 +28,10 @@ export class ProfileComponent {
       this.phone = u.phone || '';
       this.bio = u.bio || '';
     }
+  }
+
+  ngOnInit() {
+    this.seo.setPage('Edit Profile');
   }
 
   save() {

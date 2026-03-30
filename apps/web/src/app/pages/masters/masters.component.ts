@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Master } from '../../core/services/api.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-masters',
@@ -13,9 +14,10 @@ export class MastersComponent implements OnInit {
   masters = signal<Master[]>([]);
   loading = signal(true);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private seo: SeoService) {}
 
   ngOnInit() {
+    this.seo.setPage('Masters', 'Browse verified craftsmen and professionals on Majster.sk');
     this.api.getMasters().subscribe({
       next: (m) => {
         this.masters.set(m);

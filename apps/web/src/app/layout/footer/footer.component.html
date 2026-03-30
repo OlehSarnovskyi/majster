@@ -1,0 +1,31 @@
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a routerLink="/" class="footer__logo">
+          <span class="material-icons-outlined">handyman</span>
+          <span>Majster<span class="footer__dot">.sk</span></span>
+        </a>
+        <p class="footer__tagline">Find and book trusted craftsmen in Slovakia.</p>
+      </div>
+
+      <div class="footer__col">
+        <h4>Platform</h4>
+        <a routerLink="/categories">Services</a>
+        <a routerLink="/masters">Masters</a>
+        <a routerLink="/auth/register">Join as Master</a>
+      </div>
+
+      <div class="footer__col">
+        <h4>Account</h4>
+        <a routerLink="/auth/login">Log in</a>
+        <a routerLink="/auth/register">Sign up</a>
+        <a routerLink="/dashboard">Dashboard</a>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; {{ year }} Majster.sk. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
