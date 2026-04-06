@@ -1,22 +1,40 @@
 @import '../auth-shared';
 
+.gdpr-wrap {
+  margin-bottom: 20px;
+}
+
 .gdpr-checkbox {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-bottom: 20px;
   cursor: pointer;
 
-  input[type="checkbox"] {
-    margin-top: 3px;
-    width: 18px;
-    height: 18px;
-    accent-color: var(--color-primary);
+  &__box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    cursor: pointer;
+    margin-top: 1px;
+    transition: all 0.15s;
+    background: white;
+
+    .material-icons-outlined {
+      font-size: 16px;
+      color: white;
+    }
   }
 
-  span {
+  input:checked + &__box {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  &__text {
     font-size: 0.813rem;
     color: var(--color-text-light);
     line-height: 1.4;
@@ -26,17 +44,10 @@
       text-decoration: underline;
     }
   }
-
-  &--error {
-    input[type="checkbox"] {
-      box-shadow: 0 0 0 2px var(--color-error);
-      border-radius: 3px;
-    }
-  }
 }
 
-.gdpr-error {
-  display: block;
-  margin-top: 4px;
-  margin-bottom: 16px;
+.gdpr-wrap--error {
+  .gdpr-checkbox__box {
+    border-color: var(--color-error);
+  }
 }

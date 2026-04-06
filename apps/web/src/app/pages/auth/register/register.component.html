@@ -78,13 +78,20 @@
           }
         </div>
 
-        <label class="gdpr-checkbox" [class.gdpr-checkbox--error]="submitted && !gdprConsent">
-          <input type="checkbox" [(ngModel)]="gdprConsent" name="gdpr" />
-          <span>Súhlasím so <a routerLink="/privacy" target="_blank">Zásadami ochrany súkromia</a> a <a routerLink="/terms" target="_blank">Podmienkami používania</a></span>
-        </label>
-        @if (submitted && !gdprConsent) {
-          <span class="form-field__error gdpr-error">Musíte súhlasiť s podmienkami</span>
-        }
+        <div class="gdpr-wrap" [class.gdpr-wrap--error]="submitted && !gdprConsent">
+          <label class="gdpr-checkbox">
+            <input type="checkbox" [(ngModel)]="gdprConsent" name="gdpr" hidden />
+            <span class="gdpr-checkbox__box">
+              @if (gdprConsent) {
+                <span class="material-icons-outlined">check</span>
+              }
+            </span>
+            <span class="gdpr-checkbox__text">Súhlasím so <a routerLink="/privacy" target="_blank">Zásadami ochrany súkromia</a> a <a routerLink="/terms" target="_blank">Podmienkami používania</a></span>
+          </label>
+          @if (submitted && !gdprConsent) {
+            <span class="form-field__error">Musíte súhlasiť s podmienkami</span>
+          }
+        </div>
 
         <button
           type="submit"
