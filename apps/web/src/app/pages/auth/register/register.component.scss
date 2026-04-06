@@ -26,4 +26,19 @@
       text-decoration: underline;
     }
   }
+
+  &--error {
+    input[type="checkbox"] {
+      outline: 2px solid var(--color-error);
+      outline-offset: 1px;
+    }
+
+    span { color: var(--color-error); }
+  }
+}
+
+.gdpr-error {
+  display: block;
+  margin-top: -12px;
+  margin-bottom: 16px;
 }

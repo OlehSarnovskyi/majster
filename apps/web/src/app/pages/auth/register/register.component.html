@@ -78,10 +78,13 @@
           }
         </div>
 
-        <label class="gdpr-checkbox">
+        <label class="gdpr-checkbox" [class.gdpr-checkbox--error]="submitted && !gdprConsent">
           <input type="checkbox" [(ngModel)]="gdprConsent" name="gdpr" />
           <span>Súhlasím so <a routerLink="/privacy" target="_blank">Zásadami ochrany súkromia</a> a <a routerLink="/terms" target="_blank">Podmienkami používania</a></span>
         </label>
+        @if (submitted && !gdprConsent) {
+          <span class="form-field__error gdpr-error">Musíte súhlasiť s podmienkami</span>
+        }
 
         <button
           type="submit"

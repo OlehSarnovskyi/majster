@@ -3,12 +3,11 @@ import { Router, CanActivateFn } from '@angular/router';
 
 export const guestGuard: CanActivateFn = () => {
   const router = inject(Router);
+  const token = localStorage.getItem('accessToken');
 
-  // Check token directly — signal may not be hydrated yet
-  if (!localStorage.getItem('accessToken')) {
-    return true;
+  if (token) {
+    return router.createUrlTree(['/dashboard']);
   }
 
-  router.navigate(['/dashboard']);
-  return false;
+  return true;
 };
