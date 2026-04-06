@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { guestGuard } from './core/guards/guest.guard';
 
 export const appRoutes: Route[] = [
   {
@@ -10,7 +9,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'auth/login',
-    canActivate: [guestGuard],
+    // TODO: add guest guard to redirect logged-in users
     loadComponent: () =>
       import('./pages/auth/login/login.component').then(
         (m) => m.LoginComponent
@@ -18,7 +17,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'auth/register',
-    canActivate: [guestGuard],
+    // TODO: add guest guard to redirect logged-in users
     loadComponent: () =>
       import('./pages/auth/register/register.component').then(
         (m) => m.RegisterComponent

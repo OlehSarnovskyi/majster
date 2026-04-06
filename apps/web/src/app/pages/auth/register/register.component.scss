@@ -32,13 +32,11 @@
       outline: 2px solid var(--color-error);
       outline-offset: 1px;
     }
-
-    span { color: var(--color-error); }
   }
 }
 
 .gdpr-error {
   display: block;
-  margin-top: -12px;
+  margin-top: 4px;
   margin-bottom: 16px;
 }
