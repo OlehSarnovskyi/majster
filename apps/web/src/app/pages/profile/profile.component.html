@@ -1,41 +1,41 @@
 <div class="container">
   <div class="profile-form">
-    <h1>Edit Profile</h1>
-    <p class="text-muted mt-1">Update your personal information</p>
+    <h1>Upraviť profil</h1>
+    <p class="text-muted mt-1">Aktualizujte svoje osobné údaje</p>
 
     @if (error()) {
       <div class="alert alert--error mt-2">{{ error() }}</div>
     }
     @if (saved()) {
-      <div class="alert alert--success mt-2">Profile updated successfully!</div>
+      <div class="alert alert--success mt-2">Profil bol úspešne aktualizovaný!</div>
     }
 
     <div class="form-row mt-3">
       <div class="form-field">
-        <label class="form-field__label">First Name</label>
+        <label class="form-field__label">Meno</label>
         <input class="form-field__input" [(ngModel)]="firstName" />
       </div>
       <div class="form-field">
-        <label class="form-field__label">Last Name</label>
+        <label class="form-field__label">Priezvisko</label>
         <input class="form-field__input" [(ngModel)]="lastName" />
       </div>
     </div>
 
     <div class="form-field">
-      <label class="form-field__label">Phone</label>
+      <label class="form-field__label">Telefón</label>
       <input class="form-field__input" [(ngModel)]="phone" placeholder="+421 ..." />
     </div>
 
     @if (auth.isMaster()) {
       <div class="form-field">
-        <label class="form-field__label">Bio</label>
+        <label class="form-field__label">O mne</label>
         <textarea class="form-field__input" [(ngModel)]="bio" rows="4"
-          placeholder="Tell clients about yourself and your experience..."></textarea>
+          placeholder="Povedzte klientom o sebe a svojich skúsenostiach..."></textarea>
       </div>
     }
 
     <button class="btn btn--primary btn--lg" (click)="save()" [disabled]="saving()">
-      {{ saving() ? 'Saving...' : 'Save Changes' }}
+      {{ saving() ? 'Ukladá sa...' : 'Uložiť zmeny' }}
     </button>
   </div>
 </div>

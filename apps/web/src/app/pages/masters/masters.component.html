@@ -1,7 +1,7 @@
 <section class="page-header">
   <div class="container">
-    <h1>Masters</h1>
-    <p class="text-muted">Browse verified professionals</p>
+    <h1>Majstri</h1>
+    <p class="text-muted">Prehliadajte overených profesionálov</p>
   </div>
 </section>
 
@@ -15,9 +15,9 @@
   } @else if (masters().length === 0) {
     <div class="empty">
       <span class="material-icons-outlined">group_off</span>
-      <h3>No masters yet</h3>
-      <p class="text-muted">Be the first to join!</p>
-      <a routerLink="/auth/register" class="btn btn--primary mt-2">Register as Master</a>
+      <h3>Zatiaľ žiadni majstri</h3>
+      <p class="text-muted">Buďte prvý, kto sa pridá!</p>
+      <a routerLink="/auth/register" class="btn btn--primary mt-2">Zaregistrovať sa ako majster</a>
     </div>
   } @else {
     <div class="grid">
@@ -37,7 +37,7 @@
             }
             <span class="master-card__count">
               <span class="material-icons-outlined">build</span>
-              {{ m._count?.services || 0 }} services
+              {{ m._count?.services || 0 }} služieb
             </span>
           </div>
         </a>

@@ -9,8 +9,8 @@ import { RouterLink } from '@angular/router';
     <div class="container not-found">
       <span class="material-icons-outlined">explore_off</span>
       <h1>404</h1>
-      <p>Page not found</p>
-      <a routerLink="/" class="btn btn--primary mt-3">Go Home</a>
+      <p>Stránka nebola nájdená</p>
+      <a routerLink="/" class="btn btn--primary mt-3">Na úvod</a>
     </div>
   `,
   styles: [`

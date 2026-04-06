@@ -31,7 +31,7 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.seo.setPage('Edit Profile');
+    this.seo.setPage('Upraviť profil');
   }
 
   save() {

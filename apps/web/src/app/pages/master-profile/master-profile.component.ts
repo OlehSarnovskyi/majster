@@ -24,7 +24,7 @@ export class MasterProfileComponent implements OnInit {
         this.loading.set(false);
         this.seo.setPage(
           `${m.firstName} ${m.lastName}`,
-          `${m.firstName} ${m.lastName} — professional craftsman on Majster.sk. ${m.services?.length || 0} services available.`
+          `${m.firstName} ${m.lastName} — profesionálny majster na Majster.sk. ${m.services?.length || 0} dostupných služieb.`
         );
       },
       error: () => this.loading.set(false),

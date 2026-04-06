@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   constructor(private api: ApiService, private seo: SeoService) {}
 
   ngOnInit() {
-    this.seo.setPage('', 'Find and book trusted craftsmen in Slovakia. Plumbing, electrical, painting, renovation and more.');
+    this.seo.setPage('', 'Nájdite a rezervujte overených majstrov na Slovensku. Inštalatér, elektrikár, maliar, rekonštrukcia a ďalšie.');
     this.api.getCategories().subscribe({
       next: (cats) => {
         this.categories.set(cats);

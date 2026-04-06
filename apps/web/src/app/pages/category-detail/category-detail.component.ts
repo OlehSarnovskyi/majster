@@ -22,7 +22,7 @@ export class CategoryDetailComponent implements OnInit {
       next: (cat) => {
         this.category.set(cat);
         this.loading.set(false);
-        this.seo.setPage(cat.name, `Find ${cat.name.toLowerCase()} services and professionals on Majster.sk`);
+        this.seo.setPage(cat.name, `Nájdite služby a profesionálov v kategórii ${cat.name} na Majster.sk`);
       },
       error: () => this.loading.set(false),
     });

@@ -15,15 +15,58 @@ export class RegisterComponent {
   lastName = '';
   email = '';
   password = '';
+  gdprConsent = false;
   error = signal('');
   loading = signal(false);
+  submitted = false;
 
   constructor(
     private auth: AuthService,
     private router: Router
   ) {}
 
+  get firstNameError(): string {
+    if (!this.submitted) return '';
+    if (!this.firstName) return 'Meno je povinné';
+    if (this.firstName.length < 2) return 'Minimálne 2 znaky';
+    return '';
+  }
+
+  get lastNameError(): string {
+    if (!this.submitted) return '';
+    if (!this.lastName) return 'Priezvisko je povinné';
+    if (this.lastName.length < 2) return 'Minimálne 2 znaky';
+    return '';
+  }
+
+  get emailError(): string {
+    if (!this.submitted) return '';
+    if (!this.email) return 'E-mail je povinný';
+    if (!this.email.includes('@') || !this.email.includes('.')) return 'Zadajte platný e-mail';
+    return '';
+  }
+
+  get passwordError(): string {
+    if (!this.submitted) return '';
+    if (!this.password) return 'Heslo je povinné';
+    if (this.password.length < 6) return 'Minimálne 6 znakov';
+    return '';
+  }
+
+  get isValid(): boolean {
+    return (
+      this.firstName.length >= 2 &&
+      this.lastName.length >= 2 &&
+      this.email.includes('@') &&
+      this.password.length >= 6 &&
+      this.gdprConsent
+    );
+  }
+
   onSubmit() {
+    this.submitted = true;
+    if (!this.isValid) return;
+
     this.error.set('');
     this.loading.set(true);
 
@@ -39,13 +82,14 @@ export class RegisterComponent {
           this.router.navigate(['/auth/choose-role']);
         },
         error: (err) => {
-          this.error.set(err.error?.message || 'Registration failed');
+          const msg = err.error?.message;
+          this.error.set(
+            msg === 'User already exists'
+              ? 'Používateľ s týmto e-mailom už existuje'
+              : 'Registrácia zlyhala'
+          );
           this.loading.set(false);
         },
       });
-  }
-
-  loginWithGoogle() {
-    this.auth.loginWithGoogle();
   }
 }

@@ -6,26 +6,26 @@
     </a>
 
     <nav class="header__nav">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-      <a routerLink="/categories" routerLinkActive="active">Services</a>
-      <a routerLink="/masters" routerLinkActive="active">Masters</a>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Domov</a>
+      <a routerLink="/categories" routerLinkActive="active">Služby</a>
+      <a routerLink="/masters" routerLinkActive="active">Majstri</a>
     </nav>
 
     <div class="header__actions">
       @if (auth.isLoggedIn()) {
-        <a routerLink="/profile" class="header__user" title="Edit Profile">
+        <a routerLink="/profile" class="header__user" title="Upraviť profil">
           <span class="material-icons-outlined">person</span>
           <span>{{ auth.user()?.firstName }}</span>
         </a>
-        <a routerLink="/dashboard" class="btn btn--ghost btn--sm">Dashboard</a>
-        <button class="btn btn--ghost btn--sm" (click)="auth.logout()">Log out</button>
+        <a routerLink="/dashboard" class="btn btn--ghost btn--sm">Nástenka</a>
+        <button class="btn btn--ghost btn--sm" (click)="auth.logout()">Odhlásiť</button>
       } @else {
-        <a routerLink="/auth/login" class="btn btn--ghost btn--sm">Log in</a>
-        <a routerLink="/auth/register" class="btn btn--primary btn--sm">Sign up</a>
+        <a routerLink="/auth/login" class="btn btn--ghost btn--sm">Prihlásiť</a>
+        <a routerLink="/auth/register" class="btn btn--primary btn--sm">Registrácia</a>
       }
     </div>
 
-    <button class="header__burger" (click)="toggleMenu()" [attr.aria-label]="mobileMenuOpen() ? 'Close menu' : 'Open menu'">
+    <button class="header__burger" (click)="toggleMenu()" [attr.aria-label]="mobileMenuOpen() ? 'Zavrieť menu' : 'Otvoriť menu'">
       <span class="material-icons-outlined">{{ mobileMenuOpen() ? 'close' : 'menu' }}</span>
     </button>
   </div>
@@ -35,17 +35,17 @@
 @if (mobileMenuOpen()) {
   <div class="mobile-overlay" (click)="closeMenu()"></div>
   <nav class="mobile-menu">
-    <a routerLink="/" (click)="closeMenu()">Home</a>
-    <a routerLink="/categories" (click)="closeMenu()">Services</a>
-    <a routerLink="/masters" (click)="closeMenu()">Masters</a>
+    <a routerLink="/" (click)="closeMenu()">Domov</a>
+    <a routerLink="/categories" (click)="closeMenu()">Služby</a>
+    <a routerLink="/masters" (click)="closeMenu()">Majstri</a>
     <div class="mobile-menu__divider"></div>
     @if (auth.isLoggedIn()) {
-      <a routerLink="/dashboard" (click)="closeMenu()">Dashboard</a>
-      <a routerLink="/profile" (click)="closeMenu()">Profile</a>
-      <button class="mobile-menu__logout" (click)="auth.logout(); closeMenu()">Log out</button>
+      <a routerLink="/dashboard" (click)="closeMenu()">Nástenka</a>
+      <a routerLink="/profile" (click)="closeMenu()">Profil</a>
+      <button class="mobile-menu__logout" (click)="auth.logout(); closeMenu()">Odhlásiť sa</button>
     } @else {
-      <a routerLink="/auth/login" (click)="closeMenu()">Log in</a>
-      <a routerLink="/auth/register" (click)="closeMenu()">Sign up</a>
+      <a routerLink="/auth/login" (click)="closeMenu()">Prihlásiť sa</a>
+      <a routerLink="/auth/register" (click)="closeMenu()">Registrácia</a>
     }
   </nav>
 }

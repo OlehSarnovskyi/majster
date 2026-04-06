@@ -35,7 +35,7 @@ export class BookingComponent implements OnInit {
       next: (svc) => {
         this.service.set(svc);
         this.loading.set(false);
-        this.seo.setPage(`Book ${svc.name}`);
+        this.seo.setPage(`Rezervovať ${svc.name}`);
       },
       error: () => this.loading.set(false),
     });

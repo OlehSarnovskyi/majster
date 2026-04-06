@@ -12,7 +12,7 @@ export class SeoService {
 
   setPage(pageTitle: string, description?: string) {
     this.title.setTitle(
-      pageTitle ? `${pageTitle} | ${this.siteName}` : `${this.siteName} — Find & Book Craftsmen`
+      pageTitle ? `${pageTitle} | ${this.siteName}` : `${this.siteName} — Nájdite a rezervujte majstrov`
     );
     if (description) {
       this.meta.updateTag({ name: 'description', content: description });

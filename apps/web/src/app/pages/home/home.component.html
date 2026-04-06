@@ -2,33 +2,33 @@
 <section class="hero">
   <div class="container">
     <h1 class="hero__title">
-      Find a trusted <span class="hero__highlight">craftsman</span><br />
-      near you
+      Nájdite overených <span class="hero__highlight">majstrov</span><br />
+      vo vašom okolí
     </h1>
     <p class="hero__subtitle">
-      Browse verified professionals, compare prices, and book services — all in one place.
+      Prehliadajte overených profesionálov, porovnávajte ceny a rezervujte služby — všetko na jednom mieste.
     </p>
     <div class="hero__cta">
       <a routerLink="/categories" class="btn btn--primary btn--lg">
         <span class="material-icons-outlined">search</span>
-        Browse Services
+        Hľadať služby
       </a>
       <a routerLink="/auth/register" class="btn btn--secondary btn--lg">
-        Join as Master
+        Pridať sa ako majster
       </a>
     </div>
     <div class="hero__stats">
       <div class="hero__stat">
         <span class="hero__stat-number">10+</span>
-        <span class="hero__stat-label">Categories</span>
+        <span class="hero__stat-label">Kategórií</span>
       </div>
       <div class="hero__stat">
-        <span class="hero__stat-number">Fast</span>
-        <span class="hero__stat-label">Booking</span>
+        <span class="hero__stat-number">Rýchla</span>
+        <span class="hero__stat-label">Rezervácia</span>
       </div>
       <div class="hero__stat">
-        <span class="hero__stat-number">Free</span>
-        <span class="hero__stat-label">For Clients</span>
+        <span class="hero__stat-number">Zdarma</span>
+        <span class="hero__stat-label">Pre klientov</span>
       </div>
     </div>
   </div>
@@ -37,8 +37,8 @@
 <!-- Categories -->
 <section class="categories">
   <div class="container">
-    <h2 class="section-title">Popular Services</h2>
-    <p class="section-subtitle">Choose a category to find the right professional</p>
+    <h2 class="section-title">Populárne služby</h2>
+    <p class="section-subtitle">Vyberte kategóriu a nájdite správneho odborníka</p>
 
     @if (loading()) {
       <div class="categories__grid">
@@ -54,7 +54,7 @@
               <span class="material-icons-outlined">{{ cat.icon || 'build' }}</span>
             </div>
             <h3 class="category-card__name">{{ cat.name }}</h3>
-            <span class="category-card__count">{{ cat._count.services }} services</span>
+            <span class="category-card__count">{{ cat._count.services }} služieb</span>
           </a>
         }
       </div>
@@ -65,28 +65,28 @@
 <!-- How it works -->
 <section class="how-it-works">
   <div class="container">
-    <h2 class="section-title">How it works</h2>
+    <h2 class="section-title">Ako to funguje</h2>
     <div class="steps">
       <div class="step">
         <div class="step__icon">
           <span class="material-icons-outlined">search</span>
         </div>
-        <h3 class="step__title">1. Find</h3>
-        <p class="step__text">Browse categories and find the service you need</p>
+        <h3 class="step__title">1. Nájdite</h3>
+        <p class="step__text">Prehliadajte kategórie a nájdite službu, ktorú potrebujete</p>
       </div>
       <div class="step">
         <div class="step__icon">
           <span class="material-icons-outlined">calendar_today</span>
         </div>
-        <h3 class="step__title">2. Book</h3>
-        <p class="step__text">Choose a convenient time and submit your request</p>
+        <h3 class="step__title">2. Rezervujte</h3>
+        <p class="step__text">Vyberte vhodný čas a odošlite žiadosť</p>
       </div>
       <div class="step">
         <div class="step__icon">
           <span class="material-icons-outlined">check_circle</span>
         </div>
-        <h3 class="step__title">3. Done</h3>
-        <p class="step__text">The master confirms and completes the job</p>
+        <h3 class="step__title">3. Hotovo</h3>
+        <p class="step__text">Majster potvrdí a vykoná prácu</p>
       </div>
     </div>
   </div>

@@ -15,13 +15,30 @@ export class LoginComponent {
   password = '';
   error = signal('');
   loading = signal(false);
+  submitted = false;
 
   constructor(
     private auth: AuthService,
     private router: Router
   ) {}
 
+  get emailError(): string {
+    if (!this.submitted) return '';
+    if (!this.email) return 'E-mail je povinný';
+    if (!this.email.includes('@')) return 'Zadajte platný e-mail';
+    return '';
+  }
+
+  get passwordError(): string {
+    if (!this.submitted) return '';
+    if (!this.password) return 'Heslo je povinné';
+    return '';
+  }
+
   onSubmit() {
+    this.submitted = true;
+    if (this.emailError || this.passwordError) return;
+
     this.error.set('');
     this.loading.set(true);
 
@@ -30,13 +47,11 @@ export class LoginComponent {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.error.set(err.error?.message || 'Login failed');
+        this.error.set(err.error?.message === 'Invalid credentials'
+          ? 'Nesprávny e-mail alebo heslo'
+          : 'Prihlásenie zlyhalo');
         this.loading.set(false);
       },
     });
-  }
-
-  loginWithGoogle() {
-    this.auth.loginWithGoogle();
   }
 }

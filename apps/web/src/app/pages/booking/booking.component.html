@@ -3,11 +3,11 @@
     <div class="auth-prompt card">
       <div class="card__body text-center">
         <span class="material-icons-outlined">lock</span>
-        <h2>Sign in to book</h2>
-        <p class="text-muted mt-1">You need an account to make a booking</p>
+        <h2>Pre rezerváciu sa prihláste</h2>
+        <p class="text-muted mt-1">Na vytvorenie rezervácie potrebujete účet</p>
         <div class="auth-prompt__btns mt-3">
-          <a routerLink="/auth/login" class="btn btn--primary">Sign In</a>
-          <a routerLink="/auth/register" class="btn btn--secondary">Register</a>
+          <a routerLink="/auth/login" class="btn btn--primary">Prihlásiť sa</a>
+          <a routerLink="/auth/register" class="btn btn--secondary">Registrácia</a>
         </div>
       </div>
     </div>
@@ -17,33 +17,33 @@
     <div class="booking-layout">
       <div class="booking-form card">
         <div class="card__body">
-          <h1>Book Service</h1>
+          <h1>Rezervovať službu</h1>
 
           @if (error()) {
             <div class="alert alert--error mt-2">{{ error() }}</div>
           }
 
           <div class="form-field mt-3">
-            <label class="form-field__label">Date</label>
+            <label class="form-field__label">Dátum</label>
             <input type="date" class="form-field__input" [(ngModel)]="date" [min]="minDate" />
           </div>
 
           <div class="form-field">
-            <label class="form-field__label">Time</label>
+            <label class="form-field__label">Čas</label>
             <input type="time" class="form-field__input" [(ngModel)]="time" min="08:00" max="20:00" />
           </div>
 
           <div class="form-field">
-            <label class="form-field__label">Note (optional)</label>
+            <label class="form-field__label">Poznámka (voliteľné)</label>
             <textarea class="form-field__input" [(ngModel)]="note" rows="3"
-              placeholder="Describe what you need..."></textarea>
+              placeholder="Opíšte, čo potrebujete..."></textarea>
           </div>
 
           <button class="btn btn--primary btn--full btn--lg" (click)="submit()" [disabled]="submitting()">
             @if (submitting()) {
-              Booking...
+              Rezervuje sa...
             } @else {
-              Confirm Booking
+              Potvrdiť rezerváciu
             }
           </button>
         </div>
@@ -51,21 +51,21 @@
 
       <div class="booking-summary card">
         <div class="card__body">
-          <h3>Service Details</h3>
+          <h3>Detaily služby</h3>
           <h2 class="mt-2">{{ svc.name }}</h2>
           <p class="text-muted mt-1">{{ svc.description }}</p>
 
           <div class="summary-row mt-3">
-            <span>Price</span>
+            <span>Cena</span>
             <strong>&euro;{{ svc.price }}</strong>
           </div>
           <div class="summary-row">
-            <span>Duration</span>
+            <span>Trvanie</span>
             <strong>{{ svc.durationMinutes }} min</strong>
           </div>
           @if (svc.master) {
             <div class="summary-row">
-              <span>Master</span>
+              <span>Majster</span>
               <a [routerLink]="['/masters', svc.master.id]">
                 {{ svc.master.firstName }} {{ svc.master.lastName }}
               </a>
@@ -77,8 +77,8 @@
   } @else {
     <div class="empty">
       <span class="material-icons-outlined">error_outline</span>
-      <h3>Service not found</h3>
-      <a routerLink="/" class="btn btn--secondary mt-2">Go Home</a>
+      <h3>Služba nebola nájdená</h3>
+      <a routerLink="/" class="btn btn--secondary mt-2">Na úvod</a>
     </div>
   }
 </div>

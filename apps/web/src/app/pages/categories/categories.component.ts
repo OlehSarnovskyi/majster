@@ -17,7 +17,7 @@ export class CategoriesComponent implements OnInit {
   constructor(private api: ApiService, private seo: SeoService) {}
 
   ngOnInit() {
-    this.seo.setPage('Services', 'Browse all service categories — plumbing, electrical, painting, renovation and more.');
+    this.seo.setPage('Služby', 'Prehliadajte všetky kategórie služieb — inštalatér, elektrikár, maliar, rekonštrukcia a ďalšie.');
     this.api.getCategories().subscribe({
       next: (cats) => {
         this.categories.set(cats);

@@ -8,7 +8,10 @@ export class MastersService {
 
   async findAll() {
     return this.prisma.user.findMany({
-      where: { role: Role.MASTER },
+      where: {
+        role: Role.MASTER,
+        services: { some: {} },
+      },
       select: {
         id: true,
         firstName: true,

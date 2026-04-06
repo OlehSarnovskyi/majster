@@ -9,6 +9,8 @@ import {
 } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { SeoService } from '../../core/services/seo.service';
+import { ToastService } from '../../core/services/toast.service';
+import { ConfirmService } from '../../core/services/confirm.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -46,11 +48,13 @@ export class DashboardComponent implements OnInit {
   constructor(
     private api: ApiService,
     public auth: AuthService,
-    private seo: SeoService
+    private seo: SeoService,
+    private toast: ToastService,
+    private confirm: ConfirmService
   ) {}
 
   ngOnInit() {
-    this.seo.setPage('Dashboard');
+    this.seo.setPage('Nástenka');
     this.loadBookings();
     if (this.auth.isMaster()) {
       this.api.getCategories().subscribe((cats) => this.categories.set(cats));
@@ -83,9 +87,14 @@ export class DashboardComponent implements OnInit {
   }
 
   updateStatus(id: string, status: string) {
-    this.api
-      .updateBookingStatus(id, status)
-      .subscribe(() => this.loadBookings());
+    this.api.updateBookingStatus(id, status).subscribe({
+      next: () => {
+        this.loadBookings();
+        const msg =
+          status === 'CONFIRMED' ? 'Rezervácia potvrdená' : 'Rezervácia zrušená';
+        this.toast.success(msg);
+      },
+    });
   }
 
   statusClass(status: string): string {
@@ -132,14 +141,30 @@ export class DashboardComponent implements OnInit {
         this.showServiceForm.set(false);
         this.savingService.set(false);
         this.loadServices();
+        this.toast.success(
+          this.editingService() ? 'Služba aktualizovaná' : 'Služba vytvorená'
+        );
       },
       error: () => this.savingService.set(false),
     });
   }
 
-  deleteService(id: string) {
-    if (confirm('Delete this service?')) {
-      this.api.deleteService(id).subscribe(() => this.loadServices());
+  async deleteService(id: string) {
+    const confirmed = await this.confirm.confirm({
+      title: 'Vymazať službu',
+      message: 'Naozaj chcete vymazať túto službu? Táto akcia sa nedá vrátiť.',
+      confirmText: 'Vymazať',
+      cancelText: 'Zrušiť',
+      danger: true,
+    });
+
+    if (confirmed) {
+      this.api.deleteService(id).subscribe({
+        next: () => {
+          this.loadServices();
+          this.toast.success('Služba vymazaná');
+        },
+      });
     }
   }
 }
