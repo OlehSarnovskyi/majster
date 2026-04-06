@@ -29,8 +29,8 @@
 
   &--error {
     input[type="checkbox"] {
-      outline: 2px solid var(--color-error);
-      outline-offset: 1px;
+      box-shadow: 0 0 0 2px var(--color-error);
+      border-radius: 3px;
     }
   }
 }
