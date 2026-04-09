@@ -77,6 +77,14 @@ export class AuthService {
       .pipe(tap((user) => this.currentUser.set(user)));
   }
 
+  uploadAvatar(file: File) {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return this.http
+      .post<User>('/api/auth/avatar', formData)
+      .pipe(tap((user) => this.currentUser.set(user)));
+  }
+
   logout() {
     localStorage.removeItem('accessToken');
     this.currentUser.set(null);

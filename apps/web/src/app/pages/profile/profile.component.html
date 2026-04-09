@@ -10,6 +10,38 @@
       <div class="alert alert--success mt-2">Profil bol úspešne aktualizovaný!</div>
     }
 
+    <!-- Avatar upload -->
+    <div class="avatar-section mt-3">
+      <div class="avatar-wrapper">
+        @if (avatarPreview()) {
+          <img [src]="avatarPreview()" alt="Avatar" class="avatar-img" />
+        } @else {
+          <div class="avatar-placeholder">
+            <span class="material-icons-outlined">person</span>
+          </div>
+        }
+        @if (uploadingAvatar()) {
+          <div class="avatar-loading">
+            <span class="material-icons-outlined spinning">sync</span>
+          </div>
+        }
+      </div>
+      <div class="avatar-info">
+        <label for="avatar-upload" class="btn btn--ghost btn--sm">
+          <span class="material-icons-outlined">photo_camera</span>
+          Zmeniť fotku
+        </label>
+        <input
+          id="avatar-upload"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          (change)="onAvatarSelected($event)"
+          hidden
+        />
+        <p class="text-muted text-sm">JPEG, PNG alebo WebP, max 5 MB</p>
+      </div>
+    </div>
+
     <div class="form-row mt-3">
       <div class="form-field">
         <label class="form-field__label" for="profile-first-name">Meno</label>
