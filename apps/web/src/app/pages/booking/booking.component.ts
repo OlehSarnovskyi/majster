@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, input } from '@angular/core';
+import { Component, OnInit, signal, input, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService, Service } from '../../core/services/api.service';
@@ -23,12 +23,10 @@ export class BookingComponent implements OnInit {
   time = '';
   note = '';
 
-  constructor(
-    private api: ApiService,
-    public auth: AuthService,
-    private router: Router,
-    private seo: SeoService
-  ) {}
+  private api = inject(ApiService);
+  auth = inject(AuthService);
+  private router = inject(Router);
+  private seo = inject(SeoService);
 
   ngOnInit() {
     this.api.getService(this.id()).subscribe({

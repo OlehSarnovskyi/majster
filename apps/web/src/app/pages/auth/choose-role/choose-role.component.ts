@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -12,10 +12,8 @@ export class ChooseRoleComponent {
   selectedRole = signal<string | null>(null);
   loading = signal(false);
 
-  constructor(
-    private auth: AuthService,
-    private router: Router
-  ) {}
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
   selectRole(role: string) {
     this.selectedRole.set(role);

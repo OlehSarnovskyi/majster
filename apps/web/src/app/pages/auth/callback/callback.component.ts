@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -9,11 +9,9 @@ import { AuthService } from '../../../core/services/auth.service';
   styles: ['.auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; }'],
 })
 export class AuthCallbackComponent implements OnInit {
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private auth: AuthService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private auth = inject(AuthService);
 
   ngOnInit() {
     const token = this.route.snapshot.queryParamMap.get('token');

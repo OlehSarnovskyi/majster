@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -20,10 +20,8 @@ export class RegisterComponent {
   loading = signal(false);
   submitted = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router
-  ) {}
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
   get firstNameError(): string {
     if (!this.submitted) return '';

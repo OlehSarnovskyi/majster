@@ -100,23 +100,23 @@
         <div class="card__body">
           <h3>{{ editingService() ? 'Upraviť' : 'Nová' }} služba</h3>
           <div class="form-field mt-2">
-            <label class="form-field__label">Názov</label>
-            <input class="form-field__input" [(ngModel)]="svcName" placeholder="napr. Oprava potrubia" minlength="2" maxlength="100" />
+            <label class="form-field__label" for="svc-name">Názov</label>
+            <input id="svc-name" class="form-field__input" [(ngModel)]="svcName" placeholder="napr. Oprava potrubia" minlength="2" maxlength="100" />
             @if (svcName && svcName.length < 2) {
               <span class="form-field__error">Minimálne 2 znaky</span>
             }
           </div>
           <div class="form-field">
-            <label class="form-field__label">Popis</label>
-            <textarea class="form-field__input" [(ngModel)]="svcDesc" rows="2" minlength="10" maxlength="1000" placeholder="Minimálne 10 znakov"></textarea>
+            <label class="form-field__label" for="svc-desc">Popis</label>
+            <textarea id="svc-desc" class="form-field__input" [(ngModel)]="svcDesc" rows="2" minlength="10" maxlength="1000" placeholder="Minimálne 10 znakov"></textarea>
             @if (svcDesc && svcDesc.length < 10) {
               <span class="form-field__error">Minimálne 10 znakov</span>
             }
           </div>
           <div class="form-row">
             <div class="form-field">
-              <label class="form-field__label">Cena (&euro;)</label>
-              <input type="number" class="form-field__input" [(ngModel)]="svcPrice" min="0" max="100000" step="1" />
+              <label class="form-field__label" for="svc-price">Cena (&euro;)</label>
+              <input id="svc-price" type="number" class="form-field__input" [(ngModel)]="svcPrice" min="0" max="100000" step="1" />
               @if (svcPrice < 0) {
                 <span class="form-field__error">Cena nemôže byť záporná</span>
               } @else if (svcPrice > 100000) {
@@ -124,8 +124,8 @@
               }
             </div>
             <div class="form-field">
-              <label class="form-field__label">Trvanie (min)</label>
-              <input type="number" class="form-field__input" [(ngModel)]="svcDuration" min="15" max="480" step="15" />
+              <label class="form-field__label" for="svc-duration">Trvanie (min)</label>
+              <input id="svc-duration" type="number" class="form-field__input" [(ngModel)]="svcDuration" min="15" max="480" step="15" />
               @if (svcDuration < 15) {
                 <span class="form-field__error">Minimálne 15 minút</span>
               } @else if (svcDuration > 480) {
@@ -134,8 +134,8 @@
             </div>
           </div>
           <div class="form-field">
-            <label class="form-field__label">Kategória</label>
-            <select class="form-field__input" [(ngModel)]="svcCategoryId">
+            <label class="form-field__label" for="svc-category">Kategória</label>
+            <select id="svc-category" class="form-field__input" [(ngModel)]="svcCategoryId">
               @for (cat of categories(); track cat.id) {
                 <option [value]="cat.id">{{ cat.name }}</option>
               }

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
@@ -17,10 +17,8 @@ export class LoginComponent {
   loading = signal(false);
   submitted = false;
 
-  constructor(
-    private auth: AuthService,
-    private router: Router
-  ) {}
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
   get emailError(): string {
     if (!this.submitted) return '';

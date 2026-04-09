@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, input } from '@angular/core';
+import { Component, OnInit, signal, input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Category, Service } from '../../core/services/api.service';
 import { SeoService } from '../../core/services/seo.service';
@@ -15,7 +15,8 @@ export class CategoryDetailComponent implements OnInit {
   category = signal<(Category & { services: Service[] }) | null>(null);
   loading = signal(true);
 
-  constructor(private api: ApiService, private seo: SeoService) {}
+  private api = inject(ApiService);
+  private seo = inject(SeoService);
 
   ngOnInit() {
     this.api.getCategoryBySlug(this.slug()).subscribe({

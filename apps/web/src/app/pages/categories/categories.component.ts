@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Category } from '../../core/services/api.service';
 import { SeoService } from '../../core/services/seo.service';
@@ -14,7 +14,8 @@ export class CategoriesComponent implements OnInit {
   categories = signal<Category[]>([]);
   loading = signal(true);
 
-  constructor(private api: ApiService, private seo: SeoService) {}
+  private api = inject(ApiService);
+  private seo = inject(SeoService);
 
   ngOnInit() {
     this.seo.setPage('Služby', 'Prehliadajte všetky kategórie služieb — inštalatér, elektrikár, maliar, rekonštrukcia a ďalšie.');

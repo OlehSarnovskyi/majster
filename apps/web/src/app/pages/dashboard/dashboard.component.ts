@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import {
@@ -45,13 +45,11 @@ export class DashboardComponent implements OnInit {
     this.bookings().filter((b) => b.status !== 'PENDING')
   );
 
-  constructor(
-    private api: ApiService,
-    public auth: AuthService,
-    private seo: SeoService,
-    private toast: ToastService,
-    private confirm: ConfirmService
-  ) {}
+  private api = inject(ApiService);
+  auth = inject(AuthService);
+  private seo = inject(SeoService);
+  private toast = inject(ToastService);
+  private confirm = inject(ConfirmService);
 
   ngOnInit() {
     this.seo.setPage('Nástenka');
@@ -133,7 +131,7 @@ export class DashboardComponent implements OnInit {
     };
 
     const obs = this.editingService()
-      ? this.api.updateService(this.editingService()!, dto)
+      ? this.api.updateService(this.editingService() as string, dto)
       : this.api.createService(dto);
 
     obs.subscribe({

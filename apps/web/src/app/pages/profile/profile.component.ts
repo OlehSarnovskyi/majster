@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { SeoService } from '../../core/services/seo.service';
@@ -20,7 +20,10 @@ export class ProfileComponent implements OnInit {
   phone = '';
   bio = '';
 
-  constructor(public auth: AuthService, private seo: SeoService) {
+  auth = inject(AuthService);
+  private seo = inject(SeoService);
+
+  constructor() {
     const u = this.auth.user();
     if (u) {
       this.firstName = u.firstName;

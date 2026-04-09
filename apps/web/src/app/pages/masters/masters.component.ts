@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Master } from '../../core/services/api.service';
 import { SeoService } from '../../core/services/seo.service';
@@ -14,7 +14,8 @@ export class MastersComponent implements OnInit {
   masters = signal<Master[]>([]);
   loading = signal(true);
 
-  constructor(private api: ApiService, private seo: SeoService) {}
+  private api = inject(ApiService);
+  private seo = inject(SeoService);
 
   ngOnInit() {
     this.seo.setPage('Majstri', 'Prehliadajte overených remeselníkov a profesionálov na Majster.sk');

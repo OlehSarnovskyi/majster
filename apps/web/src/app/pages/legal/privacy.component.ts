@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { SeoService } from '../../core/services/seo.service';
 
 @Component({
@@ -49,7 +49,7 @@ import { SeoService } from '../../core/services/seo.service';
   `],
 })
 export class PrivacyComponent implements OnInit {
-  constructor(private seo: SeoService) {}
+  private seo = inject(SeoService);
 
   ngOnInit() {
     this.seo.setPage('Ochrana súkromia');

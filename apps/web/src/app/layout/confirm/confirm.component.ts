@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ConfirmService } from '../../core/services/confirm.service';
 
 @Component({
@@ -90,5 +90,5 @@ import { ConfirmService } from '../../core/services/confirm.service';
   `],
 })
 export class ConfirmComponent {
-  constructor(public confirmService: ConfirmService) {}
+  confirmService = inject(ConfirmService);
 }
