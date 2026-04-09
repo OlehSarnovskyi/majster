@@ -99,6 +99,38 @@ export class DashboardComponent implements OnInit {
     return `badge badge--${status.toLowerCase()}`;
   }
 
+  addToGoogleCalendar(b: Booking) {
+    const start = new Date(b.startTime);
+    const end = new Date(start.getTime() + b.service.durationMinutes * 60000);
+    const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(b.service.name)}&dates=${fmt(start)}/${fmt(end)}${b.note ? '&details=' + encodeURIComponent(b.note) : ''}`;
+    window.open(url, '_blank');
+  }
+
+  downloadIcs(b: Booking) {
+    const start = new Date(b.startTime);
+    const end = new Date(start.getTime() + b.service.durationMinutes * 60000);
+    const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      `DTSTART:${fmt(start)}`,
+      `DTEND:${fmt(end)}`,
+      `SUMMARY:${b.service.name}`,
+      b.note ? `DESCRIPTION:${b.note}` : '',
+      `UID:${b.id}@majster.sk`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].filter(Boolean).join('\r\n');
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${b.service.name}.ics`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
   // Service CRUD
   openNewService() {
     this.editingService.set(null);
