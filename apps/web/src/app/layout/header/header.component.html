@@ -33,7 +33,7 @@
 
 <!-- Mobile menu overlay -->
 @if (mobileMenuOpen()) {
-  <div class="mobile-overlay" (click)="closeMenu()"></div>
+  <div class="mobile-overlay" (click)="closeMenu()" (keydown.escape)="closeMenu()" tabindex="-1" role="button"></div>
   <nav class="mobile-menu">
     <a routerLink="/" (click)="closeMenu()">Domov</a>
     <a routerLink="/categories" (click)="closeMenu()">Služby</a>

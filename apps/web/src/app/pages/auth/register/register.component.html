@@ -12,11 +12,12 @@
         }
 
         <div class="form-field" [class.form-field--error]="firstNameError">
-          <label class="form-field__label">Meno</label>
+          <label class="form-field__label" for="reg-firstName">Meno</label>
           <input
             class="form-field__input"
             [class.form-field__input--error]="firstNameError"
             type="text"
+            id="reg-firstName"
             placeholder="Ján"
             [(ngModel)]="firstName"
             name="firstName"
@@ -29,11 +30,12 @@
         </div>
 
         <div class="form-field" [class.form-field--error]="lastNameError">
-          <label class="form-field__label">Priezvisko</label>
+          <label class="form-field__label" for="reg-lastName">Priezvisko</label>
           <input
             class="form-field__input"
             [class.form-field__input--error]="lastNameError"
             type="text"
+            id="reg-lastName"
             placeholder="Novák"
             [(ngModel)]="lastName"
             name="lastName"
@@ -46,11 +48,12 @@
         </div>
 
         <div class="form-field" [class.form-field--error]="emailError">
-          <label class="form-field__label">Email</label>
+          <label class="form-field__label" for="reg-email">Email</label>
           <input
             class="form-field__input"
             [class.form-field__input--error]="emailError"
             type="email"
+            id="reg-email"
             placeholder="vas@email.com"
             [(ngModel)]="email"
             name="email"
@@ -62,11 +65,12 @@
         </div>
 
         <div class="form-field" [class.form-field--error]="passwordError">
-          <label class="form-field__label">Heslo</label>
+          <label class="form-field__label" for="reg-password">Heslo</label>
           <input
             class="form-field__input"
             [class.form-field__input--error]="passwordError"
             type="password"
+            id="reg-password"
             placeholder="Min. 6 znakov"
             [(ngModel)]="password"
             name="password"

@@ -6,7 +6,7 @@ import { ConfirmService } from '../../core/services/confirm.service';
   standalone: true,
   template: `
     @if (confirmService.visible()) {
-      <div class="confirm-overlay" (click)="confirmService.cancel()"></div>
+      <div class="confirm-overlay" (click)="confirmService.cancel()" (keydown.escape)="confirmService.cancel()" tabindex="-1" role="dialog"></div>
       <div class="confirm-modal">
         <h3>{{ confirmService.options().title }}</h3>
         <p>{{ confirmService.options().message }}</p>

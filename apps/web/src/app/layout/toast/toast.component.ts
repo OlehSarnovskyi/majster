@@ -7,7 +7,7 @@ import { ToastService } from '../../core/services/toast.service';
   template: `
     <div class="toast-container">
       @for (toast of toastService.toasts(); track toast.id) {
-        <div class="toast toast--{{ toast.type }}" (click)="toastService.dismiss(toast.id)">
+        <div class="toast toast--{{ toast.type }}" (click)="toastService.dismiss(toast.id)" (keydown.enter)="toastService.dismiss(toast.id)" tabindex="0" role="alert">
           <span class="material-icons-outlined toast__icon">
             @switch (toast.type) {
               @case ('success') { check_circle }
