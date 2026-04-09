@@ -104,6 +104,13 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'cookies',
+    loadComponent: () =>
+      import('./pages/legal/cookies.component').then(
+        (m) => m.CookiesComponent
+      ),
+  },
+  {
     path: '**',
     loadComponent: () =>
       import('./pages/not-found/not-found.component').then(

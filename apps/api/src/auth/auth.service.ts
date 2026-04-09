@@ -131,6 +131,20 @@ export class AuthService {
     });
   }
 
+  async deleteAccount(userId: string) {
+    // Delete all related data (GDPR Art. 17 — right to erasure)
+    await this.prisma.booking.deleteMany({
+      where: { OR: [{ clientId: userId }, { masterId: userId }] },
+    });
+    await this.prisma.service.deleteMany({
+      where: { masterId: userId },
+    });
+    await this.prisma.user.delete({
+      where: { id: userId },
+    });
+    return { message: 'Account deleted' };
+  }
+
   async updateAvatar(userId: string, avatarUrl: string) {
     return this.prisma.user.update({
       where: { id: userId },

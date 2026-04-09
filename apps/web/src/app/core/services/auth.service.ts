@@ -85,6 +85,10 @@ export class AuthService {
       .pipe(tap((user) => this.currentUser.set(user)));
   }
 
+  deleteAccount() {
+    return this.http.delete('/api/auth/account');
+  }
+
   logout() {
     localStorage.removeItem('accessToken');
     this.currentUser.set(null);

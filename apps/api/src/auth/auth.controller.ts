@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Delete,
   Body,
   Get,
   Patch,
@@ -125,5 +126,11 @@ export class AuthController {
     }
     const avatarUrl = `/api/uploads/avatars/${file.filename}`;
     return this.authService.updateAvatar(req.user.id, avatarUrl);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('account')
+  deleteAccount(@Request() req: { user: { id: string } }) {
+    return this.authService.deleteAccount(req.user.id);
   }
 }

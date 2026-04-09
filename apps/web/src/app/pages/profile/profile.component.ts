@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { SeoService } from '../../core/services/seo.service';
 import { ToastService } from '../../core/services/toast.service';
+import { ConfirmService } from '../../core/services/confirm.service';
 
 @Component({
   selector: 'app-profile',
@@ -26,6 +27,7 @@ export class ProfileComponent implements OnInit {
   auth = inject(AuthService);
   private seo = inject(SeoService);
   private toast = inject(ToastService);
+  private confirm = inject(ConfirmService);
 
   constructor() {
     const u = this.auth.user();
@@ -101,5 +103,25 @@ export class ProfileComponent implements OnInit {
           this.saving.set(false);
         },
       });
+  }
+
+  async deleteAccount() {
+    const confirmed = await this.confirm.confirm({
+      title: 'Vymazať účet',
+      message:
+        'Naozaj chcete vymazať svoj účet? Všetky vaše údaje, rezervácie a služby budú nenávratne vymazané.',
+      confirmText: 'Vymazať účet',
+      cancelText: 'Zrušiť',
+      danger: true,
+    });
+
+    if (confirmed) {
+      this.auth.deleteAccount().subscribe({
+        next: () => {
+          this.toast.success('Váš účet bol vymazaný');
+          this.auth.logout();
+        },
+      });
+    }
   }
 }

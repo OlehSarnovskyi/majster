@@ -107,6 +107,43 @@
   .text-sm { font-size: 0.75rem; }
 }
 
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.danger-zone {
+  h3 {
+    font-size: 1rem;
+    color: var(--color-error);
+    margin-bottom: 4px;
+  }
+
+  p { font-size: 0.875rem; }
+}
+
+.btn--danger-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .material-icons-outlined { font-size: 18px; }
+
+  &:hover {
+    background: #FEF2F2;
+  }
+}
+
 textarea.form-field__input { resize: vertical; }
 
 @media (max-width: 640px) {

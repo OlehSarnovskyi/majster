@@ -69,5 +69,16 @@
     <button class="btn btn--primary btn--lg" (click)="save()" [disabled]="saving()">
       {{ saving() ? 'Ukladá sa...' : 'Uložiť zmeny' }}
     </button>
+
+    <hr class="divider mt-4" />
+
+    <div class="danger-zone mt-3">
+      <h3>Nebezpečná zóna</h3>
+      <p class="text-muted">Po vymazaní účtu budú všetky vaše údaje nenávratne odstránené.</p>
+      <button class="btn btn--danger-outline mt-2" (click)="deleteAccount()">
+        <span class="material-icons-outlined">delete_forever</span>
+        Vymazať účet
+      </button>
+    </div>
   </div>
 </div>
