@@ -5,7 +5,7 @@ import { AuthService } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-auth-callback',
   standalone: true,
-  template: '<div class="auth-page"><p>Signing in...</p></div>',
+  template: '<div class="auth-page"><p>Prihlasovanie...</p></div>',
   styles: ['.auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; }'],
 })
 export class AuthCallbackComponent implements OnInit {
@@ -13,13 +13,15 @@ export class AuthCallbackComponent implements OnInit {
   private router = inject(Router);
   private auth = inject(AuthService);
 
-  ngOnInit() {
+  async ngOnInit() {
     const token = this.route.snapshot.queryParamMap.get('token');
     if (token) {
       this.auth.handleGoogleCallback(token);
-      this.router.navigate(['/dashboard']);
+      // Wait for user to load before navigating, then clean token from URL
+      await this.auth.whenReady;
+      this.router.navigate(['/dashboard'], { replaceUrl: true });
     } else {
-      this.router.navigate(['/auth/login']);
+      this.router.navigate(['/auth/login'], { replaceUrl: true });
     }
   }
 }

@@ -25,6 +25,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'auth/choose-role',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/auth/choose-role/choose-role.component').then(
         (m) => m.ChooseRoleComponent

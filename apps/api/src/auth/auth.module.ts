@@ -6,6 +6,11 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategy } from './google.strategy';
 
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('JWT_SECRET environment variable is required in production');
+}
+
 const optionalProviders = [];
 
 if (process.env.GOOGLE_CLIENT_ID) {
@@ -16,8 +21,8 @@ if (process.env.GOOGLE_CLIENT_ID) {
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'change-me-in-production',
-      signOptions: { expiresIn: '7d' },
+      secret: JWT_SECRET || 'dev-only-secret-change-in-production',
+      signOptions: { expiresIn: '24h' },
     }),
   ],
   controllers: [AuthController],

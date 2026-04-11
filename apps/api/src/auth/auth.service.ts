@@ -104,6 +104,17 @@ export class AuthService {
   }
 
   async updateRole(userId: string, role: Role) {
+    // Only allow role change for users who haven't chosen yet (still CLIENT from registration)
+    const existing = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!existing) {
+      throw new UnauthorizedException();
+    }
+    // Prevent role escalation — only allow setting role once after registration
+    if (existing.role === 'MASTER') {
+      throw new ConflictException('Role already set');
+    }
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: { role },

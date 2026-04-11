@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { tap, firstValueFrom, catchError, of } from 'rxjs';
 
 export interface User {
   id: string;
@@ -22,6 +22,7 @@ export interface AuthResponse {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private currentUser = signal<User | null>(null);
+  private _userLoaded: Promise<void>;
 
   user = this.currentUser.asReadonly();
   isLoggedIn = computed(() => !!this.currentUser());
@@ -31,7 +32,12 @@ export class AuthService {
   private router = inject(Router);
 
   constructor() {
-    this.loadUser();
+    this._userLoaded = this.loadUser();
+  }
+
+  /** Resolves when the initial user load completes (used by guards) */
+  get whenReady(): Promise<void> {
+    return this._userLoaded;
   }
 
   register(dto: {
@@ -57,7 +63,7 @@ export class AuthService {
 
   handleGoogleCallback(token: string) {
     localStorage.setItem('accessToken', token);
-    this.loadUser();
+    this._userLoaded = this.loadUser();
   }
 
   updateRole(role: string) {
@@ -100,16 +106,20 @@ export class AuthService {
     this.currentUser.set(res.user);
   }
 
-  private loadUser() {
+  private loadUser(): Promise<void> {
     const token = localStorage.getItem('accessToken');
-    if (token) {
-      this.http.get<User>('/api/auth/me').subscribe({
-        next: (user) => this.currentUser.set(user),
-        error: () => {
+    if (!token) {
+      return Promise.resolve();
+    }
+    return firstValueFrom(
+      this.http.get<User>('/api/auth/me').pipe(
+        tap((user) => this.currentUser.set(user)),
+        catchError(() => {
           localStorage.removeItem('accessToken');
           this.currentUser.set(null);
-        },
-      });
-    }
+          return of(null);
+        })
+      )
+    ).then(() => undefined);
   }
 }
