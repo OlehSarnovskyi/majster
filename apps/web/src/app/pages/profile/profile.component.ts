@@ -99,7 +99,7 @@ export class ProfileComponent implements OnInit {
           setTimeout(() => this.saved.set(false), 3000);
         },
         error: (err) => {
-          this.error.set(err.error?.message || 'Failed to update profile');
+          this.error.set(err.error?.message || 'Nepodarilo sa aktualizovať profil');
           this.saving.set(false);
         },
       });

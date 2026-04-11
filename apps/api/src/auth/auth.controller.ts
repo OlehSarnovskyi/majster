@@ -21,6 +21,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { GoogleAuthGuard } from './google-auth.guard';
 import { Role } from '@prisma/client';
@@ -91,7 +92,7 @@ export class AuthController {
   @Patch('profile')
   updateProfile(
     @Request() req: { user: { id: string } },
-    @Body() dto: { firstName?: string; lastName?: string; phone?: string; bio?: string }
+    @Body() dto: UpdateProfileDto
   ) {
     return this.authService.updateProfile(req.user.id, dto);
   }

@@ -35,6 +35,22 @@ export class BookingsService {
       startTime.getTime() + service.durationMinutes * 60000
     );
 
+    // Check for overlapping bookings for this master
+    const overlap = await this.prisma.booking.findFirst({
+      where: {
+        masterId: service.masterId,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+        startTime: { lt: endTime },
+        endTime: { gt: startTime },
+      },
+    });
+
+    if (overlap) {
+      throw new BadRequestException(
+        'This time slot is already booked. Please choose a different time.'
+      );
+    }
+
     const booking = await this.prisma.booking.create({
       data: {
         clientId,

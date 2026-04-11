@@ -13,6 +13,13 @@ import { ToastService } from '../../core/services/toast.service';
 import { ConfirmService } from '../../core/services/confirm.service';
 import { FormsModule } from '@angular/forms';
 
+const STATUS_SK: Record<string, string> = {
+  PENDING: 'Čakajúca',
+  CONFIRMED: 'Potvrdená',
+  CANCELLED: 'Zrušená',
+  COMPLETED: 'Dokončená',
+};
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -74,7 +81,10 @@ export class DashboardComponent implements OnInit {
   loadServices() {
     this.loadingServices.set(true);
     const masterId = this.auth.user()?.id;
-    if (!masterId) return;
+    if (!masterId) {
+      this.loadingServices.set(false);
+      return;
+    }
     this.api.getServices({ masterId }).subscribe({
       next: (s) => {
         this.myServices.set(s);
@@ -84,7 +94,18 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  updateStatus(id: string, status: string) {
+  async updateStatus(id: string, status: string) {
+    if (status === 'CANCELLED') {
+      const confirmed = await this.confirm.confirm({
+        title: 'Zrušiť rezerváciu',
+        message: 'Naozaj chcete zrušiť túto rezerváciu?',
+        confirmText: 'Zrušiť rezerváciu',
+        cancelText: 'Ponechať',
+        danger: true,
+      });
+      if (!confirmed) return;
+    }
+
     this.api.updateBookingStatus(id, status).subscribe({
       next: () => {
         this.loadBookings();
@@ -93,6 +114,10 @@ export class DashboardComponent implements OnInit {
         this.toast.success(msg);
       },
     });
+  }
+
+  statusLabel(status: string): string {
+    return STATUS_SK[status] || status;
   }
 
   statusClass(status: string): string {
@@ -111,14 +136,16 @@ export class DashboardComponent implements OnInit {
     const start = new Date(b.startTime);
     const end = new Date(start.getTime() + b.service.durationMinutes * 60000);
     const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    const escapeIcs = (s: string) => s.replace(/[\\;,\n]/g, (m) => m === '\n' ? '\\n' : '\\' + m);
     const ics = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
+      'PRODID:-//Majster.sk//SK',
       'BEGIN:VEVENT',
       `DTSTART:${fmt(start)}`,
       `DTEND:${fmt(end)}`,
-      `SUMMARY:${b.service.name}`,
-      b.note ? `DESCRIPTION:${b.note}` : '',
+      `SUMMARY:${escapeIcs(b.service.name)}`,
+      b.note ? `DESCRIPTION:${escapeIcs(b.note)}` : '',
       `UID:${b.id}@majster.sk`,
       'END:VEVENT',
       'END:VCALENDAR',

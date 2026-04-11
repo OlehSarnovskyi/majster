@@ -52,7 +52,7 @@ export class BookingComponent implements OnInit {
 
   submit() {
     if (!this.date || !this.time) {
-      this.error.set('Please select date and time');
+      this.error.set('Vyberte dátum a čas');
       return;
     }
 
@@ -70,7 +70,7 @@ export class BookingComponent implements OnInit {
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
         error: (err) => {
-          this.error.set(err.error?.message || 'Failed to create booking');
+          this.error.set(err.error?.message || 'Nepodarilo sa vytvoriť rezerváciu');
           this.submitting.set(false);
         },
       });
