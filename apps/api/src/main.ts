@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import helmet from 'helmet';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
@@ -12,6 +13,9 @@ async function bootstrap() {
 
   // Security headers
   app.use(helmet());
+
+  // Cookie parser (needed for OAuth state verification)
+  app.use(cookieParser());
 
   // CORS
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';

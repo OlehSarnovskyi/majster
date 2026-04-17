@@ -13,11 +13,13 @@ import {
   UploadedFile,
   BadRequestException,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
+import * as crypto from 'crypto';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -38,20 +40,50 @@ if (!existsSync(UPLOADS_DIR)) {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Throttle({ auth: { limit: 5, ttl: 900000 } }) // 5 registrations per 15 min
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
+  @Throttle({ auth: { limit: 5, ttl: 900000 } }) // 5 attempts per 15 min
   @Post('login')
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
   @Get('google')
-  @UseGuards(GoogleAuthGuard)
-  googleAuth() {
-    // Guard redirects to Google
+  googleAuth(@Res() res: Response) {
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+      return res.redirect(`${frontendUrl}/auth/login`);
+    }
+
+    // Generate state and store HMAC in a short-lived cookie to prevent OAuth CSRF
+    const state = crypto.randomBytes(16).toString('hex');
+    const secret = process.env.JWT_SECRET || 'dev-only-secret-change-in-production';
+    const stateHmac = crypto.createHmac('sha256', secret).update(state).digest('hex');
+
+    res.cookie('_oauth_state', stateHmac, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 10 * 60 * 1000, // 10 minutes
+      sameSite: 'lax',
+    });
+
+    const callbackUrl =
+      process.env.GOOGLE_CALLBACK_URL ||
+      'http://localhost:3000/api/auth/google/callback';
+
+    const params = new URLSearchParams({
+      client_id: process.env.GOOGLE_CLIENT_ID!,
+      redirect_uri: callbackUrl,
+      response_type: 'code',
+      scope: 'email profile',
+      state,
+    });
+
+    res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
   }
 
   @Get('google/callback')
@@ -66,14 +98,43 @@ export class AuthController {
         lastName: string;
         avatar?: string;
       };
+      cookies?: Record<string, string>;
     },
+    @Query('state') state: string,
     @Res() res: Response
   ) {
-    const result = await this.authService.googleLogin(req.user);
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
-    res.redirect(
-      `${frontendUrl}/auth/callback?token=${result.accessToken}`
-    );
+
+    // Verify OAuth state to prevent CSRF
+    const cookieHmac = req.cookies?.['_oauth_state'];
+    res.clearCookie('_oauth_state');
+
+    if (!state || !cookieHmac) {
+      return res.redirect(`${frontendUrl}/auth/login?error=oauth_error`);
+    }
+
+    const secret = process.env.JWT_SECRET || 'dev-only-secret-change-in-production';
+    const expectedHmac = crypto
+      .createHmac('sha256', secret)
+      .update(state)
+      .digest('hex');
+
+    let valid = false;
+    try {
+      valid = crypto.timingSafeEqual(
+        Buffer.from(expectedHmac, 'hex'),
+        Buffer.from(cookieHmac, 'hex')
+      );
+    } catch {
+      valid = false;
+    }
+
+    if (!valid) {
+      return res.redirect(`${frontendUrl}/auth/login?error=oauth_error`);
+    }
+
+    const result = await this.authService.googleLogin(req.user);
+    res.redirect(`${frontendUrl}/auth/callback?token=${result.accessToken}`);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -144,6 +205,7 @@ export class AuthController {
     return this.authService.resendVerificationEmail(req.user.id);
   }
 
+  @Throttle({ auth: { limit: 3, ttl: 900000 } }) // 3 attempts per 15 min
   @Post('forgot-password')
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto.email);

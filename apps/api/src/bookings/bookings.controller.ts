@@ -12,7 +12,8 @@ import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { BookingStatus } from '@prisma/client';
+import { RolesGuard, Roles } from '../auth/roles.guard';
+import { Role, BookingStatus } from '@prisma/client';
 
 @Controller('bookings')
 @UseGuards(JwtAuthGuard)
@@ -36,11 +37,15 @@ export class BookingsController {
   }
 
   @Get('client')
+  @UseGuards(RolesGuard)
+  @Roles(Role.CLIENT)
   findClientBookings(@Request() req: { user: { id: string } }) {
     return this.bookingsService.findClientBookings(req.user.id);
   }
 
   @Get('master')
+  @UseGuards(RolesGuard)
+  @Roles(Role.MASTER)
   findMasterBookings(@Request() req: { user: { id: string } }) {
     return this.bookingsService.findMasterBookings(req.user.id);
   }

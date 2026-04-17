@@ -31,6 +31,11 @@ export class BookingsService {
     }
 
     const startTime = new Date(dto.startTime);
+
+    if (startTime <= new Date()) {
+      throw new BadRequestException('Booking time must be in the future');
+    }
+
     const endTime = new Date(
       startTime.getTime() + service.durationMinutes * 60000
     );
