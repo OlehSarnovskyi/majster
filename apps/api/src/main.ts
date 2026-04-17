@@ -12,17 +12,31 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix);
 
   // Security headers
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
+          fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
+          connectSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          frameSrc: ["'none'"],
+        },
+      },
+    })
+  );
 
   // Cookie parser (needed for OAuth state verification)
   app.use(cookieParser());
 
-  // CORS
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
-  app.enableCors({
-    origin: frontendUrl,
-    credentials: true,
-  });
+  // CORS (dev only — in production, API and frontend are on the same origin)
+  if (process.env.NODE_ENV !== 'production') {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+    app.enableCors({ origin: frontendUrl, credentials: true });
+  }
 
   // Serve uploaded files
   app.useStaticAssets(join(process.cwd(), 'uploads'), {
@@ -37,7 +51,26 @@ async function bootstrap() {
     })
   );
 
-  const port = process.env.API_PORT || 3000;
+  // Production: serve Angular build from same origin (no CORS needed)
+  if (process.env.NODE_ENV === 'production') {
+    const webBuildPath = join(process.cwd(), 'dist', 'apps', 'web', 'browser');
+    app.useStaticAssets(webBuildPath);
+
+    // SPA catch-all: serve index.html for client-side routes (non-API requests)
+    const expressApp = app.getHttpAdapter().getInstance();
+    expressApp.use(
+      (
+        req: { path: string },
+        res: { sendFile: (p: string) => void },
+        next: () => void
+      ) => {
+        if (req.path.startsWith('/api')) return next();
+        res.sendFile(join(webBuildPath, 'index.html'));
+      }
+    );
+  }
+
+  const port = process.env.PORT || process.env.API_PORT || 3000;
   await app.listen(port);
   Logger.log(
     `Application is running on: http://localhost:${port}/${globalPrefix}`
