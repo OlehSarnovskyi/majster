@@ -95,6 +95,22 @@ export class AuthService {
     return this.http.delete('/api/auth/account');
   }
 
+  forgotPassword(email: string) {
+    return this.http.post<{ message: string }>('/api/auth/forgot-password', { email });
+  }
+
+  resetPassword(token: string, password: string) {
+    return this.http.post<{ message: string }>('/api/auth/reset-password', { token, password });
+  }
+
+  verifyEmail(token: string) {
+    return this.http.get<{ message: string }>(`/api/auth/verify-email?token=${token}`);
+  }
+
+  resendVerification() {
+    return this.http.post<{ message: string }>('/api/auth/resend-verification', {});
+  }
+
   logout() {
     localStorage.removeItem('accessToken');
     this.currentUser.set(null);

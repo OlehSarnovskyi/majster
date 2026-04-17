@@ -10,7 +10,8 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'auth/login',
-    canActivate: [guestGuard],
+    canActivate: [guestGuard], // TODO: guestGuard not working reliably — investigate whenReady timing
+
     loadComponent: () =>
       import('./pages/auth/login/login.component').then(
         (m) => m.LoginComponent
@@ -30,6 +31,29 @@ export const appRoutes: Route[] = [
     loadComponent: () =>
       import('./pages/auth/choose-role/choose-role.component').then(
         (m) => m.ChooseRoleComponent
+      ),
+  },
+  {
+    path: 'auth/forgot-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./pages/auth/forgot-password/forgot-password.component').then(
+        (m) => m.ForgotPasswordComponent
+      ),
+  },
+  {
+    path: 'auth/reset-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./pages/auth/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent
+      ),
+  },
+  {
+    path: 'auth/verify-email',
+    loadComponent: () =>
+      import('./pages/auth/verify-email/verify-email.component').then(
+        (m) => m.VerifyEmailComponent
       ),
   },
   {

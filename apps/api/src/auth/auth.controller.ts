@@ -4,6 +4,7 @@ import {
   Delete,
   Body,
   Get,
+  Query,
   Patch,
   UseGuards,
   Request,
@@ -22,6 +23,8 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { GoogleAuthGuard } from './google-auth.guard';
 import { Role } from '@prisma/client';
@@ -127,6 +130,28 @@ export class AuthController {
     }
     const avatarUrl = `/api/uploads/avatars/${file.filename}`;
     return this.authService.updateAvatar(req.user.id, avatarUrl);
+  }
+
+  @Get('verify-email')
+  verifyEmail(@Query('token') token: string) {
+    if (!token) throw new BadRequestException('Token is required');
+    return this.authService.verifyEmail(token);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('resend-verification')
+  resendVerification(@Request() req: { user: { id: string } }) {
+    return this.authService.resendVerificationEmail(req.user.id);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto.email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto.token, dto.password);
   }
 
   @UseGuards(JwtAuthGuard)

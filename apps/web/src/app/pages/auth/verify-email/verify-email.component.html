@@ -1,0 +1,25 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    <div class="card__body">
+      <div class="auth-card__header">
+        <h1>Overenie e-mailu</h1>
+      </div>
+
+      @if (loading()) {
+        <p class="text-muted">Overuje sa váš e-mail...</p>
+      } @else if (success()) {
+        <div class="auth-card__success">
+          Váš e-mail bol úspešne overený!
+        </div>
+        <p class="auth-card__footer">
+          <a routerLink="/auth/login" class="btn btn--primary btn--full">Prihlásiť sa</a>
+        </p>
+      } @else {
+        <div class="auth-card__error">{{ error() }}</div>
+        <p class="auth-card__footer">
+          <a routerLink="/auth/login">Späť na prihlásenie</a>
+        </p>
+      }
+    </div>
+  </div>
+</div>

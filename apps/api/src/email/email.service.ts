@@ -28,10 +28,21 @@ export class EmailService {
   }
 
   async sendNewBookingNotification(booking: BookingEmailData) {
-    const subject = `New booking: ${booking.service.name}`;
-    const text = `Hello ${booking.master.firstName},\n\nYou have a new booking from ${booking.client.firstName} for "${booking.service.name}" on ${new Date(booking.startTime).toLocaleString()}.\n\nPlease log in to confirm or decline.\n\nMajster.sk`;
+    const dateStr = new Date(booking.startTime).toLocaleString();
 
-    await this.sendMail(booking.master.email, subject, text);
+    // Notify master
+    await this.sendMail(
+      booking.master.email,
+      `New booking: ${booking.service.name}`,
+      `Hello ${booking.master.firstName},\n\nYou have a new booking from ${booking.client.firstName} for "${booking.service.name}" on ${dateStr}.\n\nPlease log in to confirm or decline.\n\nMajster.sk`
+    );
+
+    // Notify client
+    await this.sendMail(
+      booking.client.email,
+      `Booking confirmed: ${booking.service.name}`,
+      `Hello ${booking.client.firstName},\n\nYour booking for "${booking.service.name}" with ${booking.master.firstName} on ${dateStr} has been submitted and is awaiting confirmation.\n\nMajster.sk`
+    );
   }
 
   async sendBookingStatusUpdate(booking: BookingEmailData) {
@@ -46,6 +57,26 @@ export class EmailService {
     const text = `Hello ${booking.client.firstName},\n\nYour booking for "${booking.service.name}" on ${new Date(booking.startTime).toLocaleString()} has been ${statusText} by ${booking.master.firstName}.\n\nMajster.sk`;
 
     await this.sendMail(booking.client.email, subject, text);
+  }
+
+  async sendPasswordResetEmail(to: string, firstName: string, token: string) {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+    const resetUrl = `${frontendUrl}/auth/reset-password?token=${token}`;
+    await this.sendMail(
+      to,
+      'Password reset request — Majster.sk',
+      `Hello ${firstName},\n\nYou requested a password reset. Click the link below to set a new password:\n\n${resetUrl}\n\nThis link expires in 1 hour. If you did not request this, ignore this email.\n\nMajster.sk`
+    );
+  }
+
+  async sendEmailVerification(to: string, firstName: string, token: string) {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+    const verifyUrl = `${frontendUrl}/auth/verify-email?token=${token}`;
+    await this.sendMail(
+      to,
+      'Verify your email — Majster.sk',
+      `Hello ${firstName},\n\nPlease verify your email address by clicking the link below:\n\n${verifyUrl}\n\nMajster.sk`
+    );
   }
 
   private async sendMail(to: string, subject: string, text: string) {
