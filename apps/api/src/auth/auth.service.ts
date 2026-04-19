@@ -79,6 +79,8 @@ export class AuthService {
     lastName: string;
     avatar?: string;
   }) {
+    let isNewUser = false;
+
     let user = await this.prisma.user.findUnique({
       where: { googleId: googleUser.googleId },
     });
@@ -97,6 +99,7 @@ export class AuthService {
           },
         });
       } else {
+        isNewUser = true;
         user = await this.prisma.user.create({
           data: {
             email: googleUser.email,
@@ -104,12 +107,13 @@ export class AuthService {
             firstName: googleUser.firstName,
             lastName: googleUser.lastName,
             avatar: googleUser.avatar,
+            emailVerified: true, // Google already verified the email
           },
         });
       }
     }
 
-    return this.buildAuthResponse(user);
+    return { ...this.buildAuthResponse(user), isNewUser };
   }
 
   async updateRole(userId: string, role: Role) {

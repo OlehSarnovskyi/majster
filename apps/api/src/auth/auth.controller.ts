@@ -134,7 +134,8 @@ export class AuthController {
     }
 
     const result = await this.authService.googleLogin(req.user);
-    res.redirect(`${frontendUrl}/auth/callback?token=${result.accessToken}`);
+    const newParam = result.isNewUser ? '&new=1' : '';
+    res.redirect(`${frontendUrl}/auth/callback?token=${result.accessToken}${newParam}`);
   }
 
   @UseGuards(JwtAuthGuard)

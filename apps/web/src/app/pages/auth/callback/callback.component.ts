@@ -15,11 +15,14 @@ export class AuthCallbackComponent implements OnInit {
 
   async ngOnInit() {
     const token = this.route.snapshot.queryParamMap.get('token');
+    const isNew = this.route.snapshot.queryParamMap.get('new') === '1';
+
     if (token) {
       this.auth.handleGoogleCallback(token);
-      // Wait for user to load before navigating, then clean token from URL
       await this.auth.whenReady;
-      this.router.navigate(['/dashboard'], { replaceUrl: true });
+      // New Google users must choose a role first
+      const destination = isNew ? '/auth/choose-role' : '/dashboard';
+      this.router.navigate([destination], { replaceUrl: true });
     } else {
       this.router.navigate(['/auth/login'], { replaceUrl: true });
     }
