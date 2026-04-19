@@ -23,6 +23,10 @@ export class RegisterComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  loginWithGoogle() {
+    this.auth.loginWithGoogle();
+  }
+
   get firstNameError(): string {
     if (!this.submitted) return '';
     if (!this.firstName) return 'Meno je povinné';

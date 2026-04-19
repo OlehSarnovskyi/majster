@@ -3,16 +3,16 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const categories = [
-  { name: 'Plumbing', slug: 'plumbing', icon: 'plumbing' },
-  { name: 'Electrical', slug: 'electrical', icon: 'electrical_services' },
-  { name: 'Painting', slug: 'painting', icon: 'format_paint' },
-  { name: 'Carpentry', slug: 'carpentry', icon: 'carpenter' },
-  { name: 'Cleaning', slug: 'cleaning', icon: 'cleaning_services' },
-  { name: 'Moving', slug: 'moving', icon: 'local_shipping' },
-  { name: 'Renovation', slug: 'renovation', icon: 'construction' },
-  { name: 'Gardening', slug: 'gardening', icon: 'yard' },
-  { name: 'Locksmith', slug: 'locksmith', icon: 'lock' },
-  { name: 'Appliance Repair', slug: 'appliance-repair', icon: 'home_repair_service' },
+  { name: 'Inštalatérstvo', slug: 'instalaterstvo', icon: 'plumbing' },
+  { name: 'Elektrikár', slug: 'elektrikar', icon: 'electrical_services' },
+  { name: 'Maľovanie', slug: 'malovanie', icon: 'format_paint' },
+  { name: 'Tesárstvo', slug: 'tesarstvo', icon: 'carpenter' },
+  { name: 'Upratovanie', slug: 'upratovanie', icon: 'cleaning_services' },
+  { name: 'Sťahovanie', slug: 'stahovanie', icon: 'local_shipping' },
+  { name: 'Rekonštrukcia', slug: 'rekonstrukcia', icon: 'construction' },
+  { name: 'Záhradníctvo', slug: 'zahradnictvo', icon: 'yard' },
+  { name: 'Zámočníctvo', slug: 'zamocnictvo', icon: 'lock' },
+  { name: 'Oprava spotrebičov', slug: 'oprava-spotrebicov', icon: 'home_repair_service' },
 ];
 
 async function main() {

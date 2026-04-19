@@ -20,6 +20,10 @@ export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  loginWithGoogle() {
+    this.auth.loginWithGoogle();
+  }
+
   get emailError(): string {
     if (!this.submitted) return '';
     if (!this.email) return 'E-mail je povinný';

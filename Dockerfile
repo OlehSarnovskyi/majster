@@ -46,4 +46,4 @@ RUN mkdir -p uploads/avatars
 EXPOSE 3000
 
 # Run DB migrations then start the server
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node apps/api/dist/main.js"]
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node_modules/.bin/tsx prisma/seed.ts && node apps/api/dist/main.js"]
