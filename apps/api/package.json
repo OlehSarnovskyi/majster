@@ -56,6 +56,12 @@
         ],
         "executor": "nx:noop"
       },
+      "test": {
+        "executor": "@nx/jest:jest",
+        "options": {
+          "jestConfig": "apps/api/jest.config.js"
+        }
+      },
       "serve": {
         "continuous": true,
         "executor": "@nx/js:node",
@@ -87,6 +93,11 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@nestjs/testing": "^11.0.0"
+    "@nestjs/testing": "^11.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/supertest": "^6.0.3",
+    "jest": "^29.7.0",
+    "supertest": "^7.1.0",
+    "ts-jest": "^29.4.0"
   }
 }
