@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 
 interface BookingEmailData {
@@ -10,53 +10,77 @@ interface BookingEmailData {
 }
 
 @Injectable()
-export class EmailService {
+export class EmailService implements OnModuleInit {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter | null = null;
 
   constructor() {
-    if (process.env.SMTP_HOST) {
+    const host = process.env.SMTP_HOST;
+    const port = parseInt(process.env.SMTP_PORT || '587');
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    const from = process.env.SMTP_FROM;
+
+    this.logger.log(
+      `SMTP config: host=${host ?? 'MISSING'} port=${port} user=${user ?? 'MISSING'} pass=${pass ? '***set***' : 'MISSING'} from=${from ?? 'MISSING'}`
+    );
+
+    if (host && user && pass) {
       this.transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || '587'),
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
+        host,
+        port,
+        secure: port === 465, // true only for SSL port 465; port 587 uses STARTTLS
+        requireTLS: port === 587,
+        auth: { user, pass },
       });
+    } else {
+      this.logger.warn(
+        'SMTP not configured — emails will only be logged to console. Set SMTP_HOST, SMTP_USER, SMTP_PASS env vars.'
+      );
+    }
+  }
+
+  async onModuleInit() {
+    if (!this.transporter) return;
+
+    try {
+      await this.transporter.verify();
+      this.logger.log('✅ SMTP connection verified successfully');
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`❌ SMTP connection FAILED: ${msg}`, error instanceof Error ? error.stack : undefined);
     }
   }
 
   async sendNewBookingNotification(booking: BookingEmailData) {
-    const dateStr = new Date(booking.startTime).toLocaleString();
+    const dateStr = new Date(booking.startTime).toLocaleString('sk-SK');
 
-    // Notify master
     await this.sendMail(
       booking.master.email,
-      `New booking: ${booking.service.name}`,
-      `Hello ${booking.master.firstName},\n\nYou have a new booking from ${booking.client.firstName} for "${booking.service.name}" on ${dateStr}.\n\nPlease log in to confirm or decline.\n\nMajster.sk`
+      `Nová rezervácia: ${booking.service.name}`,
+      `Dobrý deň ${booking.master.firstName},\n\nMáte novú rezerváciu od ${booking.client.firstName} na službu "${booking.service.name}" dňa ${dateStr}.\n\nProsím prihláste sa a potvrďte alebo zamietnte rezerváciu.\n\nMajster.sk`
     );
 
-    // Notify client
     await this.sendMail(
       booking.client.email,
-      `Booking confirmed: ${booking.service.name}`,
-      `Hello ${booking.client.firstName},\n\nYour booking for "${booking.service.name}" with ${booking.master.firstName} on ${dateStr} has been submitted and is awaiting confirmation.\n\nMajster.sk`
+      `Rezervácia prijatá: ${booking.service.name}`,
+      `Dobrý deň ${booking.client.firstName},\n\nVaša rezervácia na službu "${booking.service.name}" u majstra ${booking.master.firstName} dňa ${dateStr} bola odoslaná a čaká na potvrdenie.\n\nMajster.sk`
     );
   }
 
   async sendBookingStatusUpdate(booking: BookingEmailData) {
-    const statusText =
-      booking.status === 'CONFIRMED'
-        ? 'confirmed'
-        : booking.status === 'CANCELLED'
-          ? 'cancelled'
-          : 'completed';
+    const statusMap: Record<string, string> = {
+      CONFIRMED: 'potvrdená',
+      CANCELLED: 'zrušená',
+      COMPLETED: 'dokončená',
+    };
+    const statusText = statusMap[booking.status ?? ''] ?? booking.status;
 
-    const subject = `Booking ${statusText}: ${booking.service.name}`;
-    const text = `Hello ${booking.client.firstName},\n\nYour booking for "${booking.service.name}" on ${new Date(booking.startTime).toLocaleString()} has been ${statusText} by ${booking.master.firstName}.\n\nMajster.sk`;
-
-    await this.sendMail(booking.client.email, subject, text);
+    await this.sendMail(
+      booking.client.email,
+      `Rezervácia ${statusText}: ${booking.service.name}`,
+      `Dobrý deň ${booking.client.firstName},\n\nVaša rezervácia na službu "${booking.service.name}" dňa ${new Date(booking.startTime).toLocaleString('sk-SK')} bola ${statusText} majstrom ${booking.master.firstName}.\n\nMajster.sk`
+    );
   }
 
   async sendPasswordResetEmail(to: string, firstName: string, token: string) {
@@ -64,8 +88,8 @@ export class EmailService {
     const resetUrl = `${frontendUrl}/auth/reset-password?token=${token}`;
     await this.sendMail(
       to,
-      'Password reset request — Majster.sk',
-      `Hello ${firstName},\n\nYou requested a password reset. Click the link below to set a new password:\n\n${resetUrl}\n\nThis link expires in 1 hour. If you did not request this, ignore this email.\n\nMajster.sk`
+      'Obnovenie hesla — Majster.sk',
+      `Dobrý deň ${firstName},\n\nPožiadali ste o obnovenie hesla. Kliknite na odkaz nižšie pre nastavenie nového hesla:\n\n${resetUrl}\n\nOdkaz je platný 1 hodinu. Ak ste o obnovenie nepožiadali, ignorujte tento email.\n\nMajster.sk`
     );
   }
 
@@ -74,28 +98,27 @@ export class EmailService {
     const verifyUrl = `${frontendUrl}/auth/verify-email?token=${token}`;
     await this.sendMail(
       to,
-      'Verify your email — Majster.sk',
-      `Hello ${firstName},\n\nPlease verify your email address by clicking the link below:\n\n${verifyUrl}\n\nMajster.sk`
+      'Overte váš email — Majster.sk',
+      `Dobrý deň ${firstName},\n\nProsím overte vašu emailovú adresu kliknutím na odkaz nižšie:\n\n${verifyUrl}\n\nMajster.sk`
     );
   }
 
   private async sendMail(to: string, subject: string, text: string) {
     if (!this.transporter) {
-      this.logger.log(`[DEV] Email to ${to}: ${subject}`);
+      this.logger.log(`[DEV - no SMTP] Email to ${to} | Subject: ${subject}`);
       this.logger.debug(text);
       return;
     }
 
+    const from = process.env.SMTP_FROM || 'noreply@majster.sk';
+    this.logger.log(`Sending email to ${to} | Subject: ${subject} | From: ${from}`);
+
     try {
-      await this.transporter.sendMail({
-        from: process.env.SMTP_FROM || 'noreply@majster.sk',
-        to,
-        subject,
-        text,
-      });
-      this.logger.log(`Email sent to ${to}: ${subject}`);
-    } catch (error) {
-      this.logger.error(`Failed to send email to ${to}`, error);
+      const info = await this.transporter.sendMail({ from, to, subject, text });
+      this.logger.log(`✅ Email sent to ${to} | MessageId: ${info.messageId}`);
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`❌ Failed to send email to ${to}: ${msg}`, error instanceof Error ? error.stack : undefined);
     }
   }
 }
