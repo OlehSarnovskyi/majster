@@ -10,6 +10,7 @@ import { ServicesModule } from '../services/services.module';
 import { BookingsModule } from '../bookings/bookings.module';
 import { MastersModule } from '../masters/masters.module';
 import { OriginMiddleware } from '../common/middleware/origin.middleware';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { OriginMiddleware } from '../common/middleware/origin.middleware';
     ]),
     PrismaModule,
     AuthModule,
+    EmailModule,
     CategoriesModule,
     ServicesModule,
     BookingsModule,

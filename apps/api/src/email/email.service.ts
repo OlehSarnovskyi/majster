@@ -93,6 +93,14 @@ export class EmailService implements OnModuleInit {
     );
   }
 
+  async sendTestEmail(to: string) {
+    await this.sendMail(
+      to,
+      '✅ Test email — Majster.sk SMTP works!',
+      `Tento email bol odoslaný z produkčného servera Majster.sk.\n\nSMTP konfigurácia funguje správne!\n\nČas odoslania: ${new Date().toISOString()}\n\nMajster.sk`
+    );
+  }
+
   async sendEmailVerification(to: string, firstName: string, token: string) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
     const verifyUrl = `${frontendUrl}/auth/verify-email?token=${token}`;
