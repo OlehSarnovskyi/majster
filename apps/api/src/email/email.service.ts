@@ -93,6 +93,15 @@ export class EmailService implements OnModuleInit {
     );
   }
 
+  async sendWelcomeEmail(to: string, firstName: string) {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+    await this.sendMail(
+      to,
+      'Vitajte na Majster.sk! 🎉',
+      `Dobrý deň ${firstName},\n\nVitajte na Majster.sk!\n\nVáš účet bol úspešne vytvorený cez Google. Môžete sa kedykoľvek prihlásiť pomocou tlačidla "Prihlásiť sa cez Google".\n\nČo môžete robiť:\n• Prehliadať majstrov a ich služby\n• Rezervovať termíny online\n• Sledovať stav vašich rezervácií\n\nZačnite hľadať: ${frontendUrl}/services\n\nMajster.sk — majster na všetky ruky`
+    );
+  }
+
   async sendTestEmail(to: string) {
     await this.sendMail(
       to,

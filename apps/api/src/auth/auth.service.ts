@@ -110,6 +110,10 @@ export class AuthService {
             emailVerified: true, // Google already verified the email
           },
         });
+        // Send welcome email async — don't block login if it fails
+        this.emailService
+          .sendWelcomeEmail(user.email, user.firstName)
+          .catch((err) => console.error('Welcome email failed:', err));
       }
     }
 
