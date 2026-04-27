@@ -180,6 +180,19 @@ export class DashboardComponent implements OnInit {
   }
 
   saveService() {
+    // Trim whitespace before sending — prevent spaces-only values
+    this.svcName = this.svcName.trim();
+    this.svcDesc = this.svcDesc.trim();
+
+    if (!this.svcName || this.svcName.length < 2) {
+      this.toast.error('Názov musí mať aspoň 2 znaky');
+      return;
+    }
+    if (!this.svcDesc || this.svcDesc.length < 10) {
+      this.toast.error('Popis musí mať aspoň 10 znakov');
+      return;
+    }
+
     this.savingService.set(true);
     const dto = {
       name: this.svcName,
