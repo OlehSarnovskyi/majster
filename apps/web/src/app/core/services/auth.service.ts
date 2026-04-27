@@ -9,6 +9,7 @@ export interface User {
   firstName: string;
   lastName: string;
   role: string;
+  roleChosen: boolean;
   phone?: string;
   avatar?: string;
   bio?: string;
@@ -55,6 +56,11 @@ export class AuthService {
     return this.http
       .post<AuthResponse>('/api/auth/login', dto)
       .pipe(tap((res) => this.handleAuth(res)));
+  }
+
+  needsRoleSelection(): boolean {
+    const user = this.currentUser();
+    return !!user && !user.roleChosen;
   }
 
   loginWithGoogle() {

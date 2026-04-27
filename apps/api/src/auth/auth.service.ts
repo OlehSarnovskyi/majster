@@ -136,12 +136,12 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     // Prevent role escalation — only allow setting role once after registration
-    if (existing.role === 'MASTER') {
+    if (existing.roleChosen) {
       throw new ConflictException('Role already set');
     }
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data: { role },
+      data: { role, roleChosen: true },
     });
     return this.buildAuthResponse(user);
   }
@@ -209,6 +209,7 @@ export class AuthService {
         avatar: true,
         bio: true,
         role: true,
+        roleChosen: true,
       },
     });
   }
@@ -298,6 +299,7 @@ export class AuthService {
     firstName: string;
     lastName: string;
     role: string;
+    roleChosen: boolean;
   }) {
     const payload = { sub: user.id, email: user.email, role: user.role };
     return {
@@ -308,6 +310,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        roleChosen: user.roleChosen,
       },
     };
   }

@@ -45,8 +45,9 @@ export class LoginComponent {
     this.loading.set(true);
 
     this.auth.login({ email: this.email, password: this.password }).subscribe({
-      next: () => {
-        this.router.navigate(['/dashboard']);
+      next: (res) => {
+        const destination = res.user.roleChosen ? '/dashboard' : '/auth/choose-role';
+        this.router.navigate([destination]);
       },
       error: (err) => {
         this.error.set(err.error?.message === 'Invalid credentials'
