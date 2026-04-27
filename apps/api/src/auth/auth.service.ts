@@ -49,7 +49,14 @@ export class AuthService {
       },
     });
 
-    await this.emailService.sendEmailVerification(user.email, user.firstName, emailVerificationToken);
+    // Send both emails async — don't block registration if they fail
+    this.emailService
+      .sendEmailVerification(user.email, user.firstName, emailVerificationToken)
+      .catch((err) => console.error('Verification email failed:', err));
+
+    this.emailService
+      .sendWelcomeEmail(user.email, user.firstName)
+      .catch((err) => console.error('Welcome email failed:', err));
 
     return this.buildAuthResponse(user);
   }
@@ -226,9 +233,12 @@ export class AuthService {
   async forgotPassword(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
-    // Always return success to avoid email enumeration
-    if (!user || !user.password) {
-      return { message: 'If this email exists, a reset link has been sent' };
+    if (!user) {
+      throw new BadRequestException('Účet s týmto e-mailom neexistuje');
+    }
+
+    if (!user.password) {
+      throw new BadRequestException('Tento účet používa prihlásenie cez Google. Heslo nie je nastavené.');
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
@@ -241,7 +251,7 @@ export class AuthService {
 
     await this.emailService.sendPasswordResetEmail(user.email, user.firstName, resetToken);
 
-    return { message: 'If this email exists, a reset link has been sent' };
+    return { message: 'Reset link sent' };
   }
 
   async resetPassword(token: string, newPassword: string) {

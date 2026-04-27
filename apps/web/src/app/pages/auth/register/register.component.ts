@@ -51,7 +51,7 @@ export class RegisterComponent {
   get passwordError(): string {
     if (!this.submitted) return '';
     if (!this.password) return 'Heslo je povinné';
-    if (this.password.length < 6) return 'Minimálne 6 znakov';
+    if (this.password.length < 8) return 'Minimálne 8 znakov';
     return '';
   }
 
@@ -60,7 +60,7 @@ export class RegisterComponent {
       this.firstName.length >= 2 &&
       this.lastName.length >= 2 &&
       this.email.includes('@') &&
-      this.password.length >= 6 &&
+      this.password.length >= 8 &&
       this.gdprConsent
     );
   }
