@@ -162,6 +162,7 @@ export class AuthService {
         avatar: true,
         bio: true,
         role: true,
+        roleChosen: true,
       },
     });
   }
@@ -193,6 +194,7 @@ export class AuthService {
         avatar: true,
         bio: true,
         role: true,
+        roleChosen: true,
       },
     });
   }

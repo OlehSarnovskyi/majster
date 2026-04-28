@@ -212,6 +212,7 @@ export class AuthController {
     return this.authService.forgotPassword(dto.email);
   }
 
+  @Throttle({ auth: { limit: 5, ttl: 900000 } }) // 5 attempts per 15 min
   @Post('reset-password')
   resetPassword(@Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(dto.token, dto.password);
