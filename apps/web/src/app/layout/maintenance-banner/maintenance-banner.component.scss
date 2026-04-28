@@ -1,0 +1,36 @@
+.maintenance-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #f59e0b;
+  color: #1a1a1a;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 10px 16px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .material-icons-outlined {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  &__retry {
+    background: rgba(0, 0, 0, 0.15);
+    border: none;
+    border-radius: 6px;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.25);
+    }
+  }
+}

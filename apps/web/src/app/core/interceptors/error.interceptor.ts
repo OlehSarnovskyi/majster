@@ -1,7 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 import { ToastService } from '../services/toast.service';
+import { ServerStatusService } from '../services/server-status.service';
 
 const ERROR_TRANSLATIONS: Record<string, string> = {
   // Auth
@@ -53,11 +54,22 @@ function translateError(msg: string): string {
   return msg;
 }
 
+const SERVER_DOWN_STATUSES = new Set([0, 502, 503]);
+
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const toast = inject(ToastService);
+  const serverStatus = inject(ServerStatusService);
 
   return next(req).pipe(
+    tap(() => serverStatus.markUp()),
     catchError((err) => {
+      if (SERVER_DOWN_STATUSES.has(err.status)) {
+        serverStatus.markDown();
+        return throwError(() => err);
+      }
+
+      serverStatus.markUp();
+
       // Don't show toast for auth check (GET /api/auth/me) — silent fail
       const isSilent = req.method === 'GET' && req.url.includes('/auth/me');
 

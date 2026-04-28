@@ -5,6 +5,7 @@ import { FooterComponent } from './layout/footer/footer.component';
 import { ToastComponent } from './layout/toast/toast.component';
 import { ConfirmComponent } from './layout/confirm/confirm.component';
 import { CookieBannerComponent } from './layout/cookie-banner/cookie-banner.component';
+import { MaintenanceBannerComponent } from './layout/maintenance-banner/maintenance-banner.component';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import { CookieBannerComponent } from './layout/cookie-banner/cookie-banner.comp
     ToastComponent,
     ConfirmComponent,
     CookieBannerComponent,
+    MaintenanceBannerComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

@@ -1,0 +1,7 @@
+@if (serverStatus.isDown()) {
+  <div class="maintenance-banner" role="alert">
+    <span class="material-icons-outlined">warning_amber</span>
+    <span>Server je dočasne nedostupný. Pracujeme na tom.</span>
+    <button class="maintenance-banner__retry" (click)="retry()">Skúsiť znova</button>
+  </div>
+}
