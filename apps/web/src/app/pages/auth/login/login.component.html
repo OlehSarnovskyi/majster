@@ -6,6 +6,27 @@
         <p class="text-muted">Prihláste sa do svojho účtu</p>
       </div>
 
+      @if (emailNotVerified()) {
+        <div class="auth-card__verify-notice">
+          <p>
+            <strong>E-mail nie je overený.</strong>
+            Pred prihlásením prosím overte svoju e-mailovú adresu.
+          </p>
+          @if (resendSent()) {
+            <p class="auth-card__verify-sent">✅ Overovací e-mail bol odoslaný. Skontrolujte schránku.</p>
+          } @else {
+            <button
+              type="button"
+              class="btn btn--ghost btn--sm"
+              [disabled]="resendLoading()"
+              (click)="resendVerification()"
+            >
+              {{ resendLoading() ? 'Odosiela sa...' : 'Poslať overovací e-mail znova' }}
+            </button>
+          }
+        </div>
+      }
+
       <form (ngSubmit)="onSubmit()">
         @if (error()) {
           <div class="auth-card__error">{{ error() }}</div>

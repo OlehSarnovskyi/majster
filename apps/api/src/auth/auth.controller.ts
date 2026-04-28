@@ -229,6 +229,12 @@ export class AuthController {
   }
 
   @Throttle({ auth: { limit: 3, ttl: 900000 } }) // 3 attempts per 15 min
+  @Post('resend-verification-email')
+  resendVerificationByEmail(@Body() dto: { email: string }) {
+    return this.authService.resendVerificationEmailByEmail(dto.email);
+  }
+
+  @Throttle({ auth: { limit: 3, ttl: 900000 } }) // 3 attempts per 15 min
   @Post('forgot-password')
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto.email);

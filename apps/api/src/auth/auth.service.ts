@@ -76,6 +76,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (!user.emailVerified) {
+      throw new UnauthorizedException('Email not verified');
+    }
+
     return this.buildAuthResponse(user);
   }
 
@@ -291,7 +295,27 @@ export class AuthService {
       data: { emailVerificationToken },
     });
 
-    await this.emailService.sendEmailVerification(user.email, user.firstName, emailVerificationToken);
+    this.emailService.sendEmailVerification(user.email, user.firstName, emailVerificationToken).catch((err) =>
+      this.logger.error('Failed to send verification email', err)
+    );
+    return { message: 'Verification email sent' };
+  }
+
+  async resendVerificationEmailByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    // Always return success to prevent user enumeration
+    if (!user || user.emailVerified || !user.password) return { message: 'Verification email sent' };
+
+    const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { emailVerificationToken },
+    });
+
+    this.emailService.sendEmailVerification(user.email, user.firstName, emailVerificationToken).catch((err) =>
+      this.logger.error('Failed to send verification email by email', err)
+    );
     return { message: 'Verification email sent' };
   }
 

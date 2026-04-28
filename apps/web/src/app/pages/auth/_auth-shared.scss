@@ -66,6 +66,26 @@
     margin-bottom: 20px;
   }
 
+  &__verify-notice {
+    background: #FFFBEB;
+    border: 1px solid #FCD34D;
+    color: #92400E;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    p { margin: 0; line-height: 1.5; }
+  }
+
+  &__verify-sent {
+    color: #16A34A;
+    font-weight: 500;
+  }
+
   &__forgot {
     text-align: right;
     margin-top: -8px;

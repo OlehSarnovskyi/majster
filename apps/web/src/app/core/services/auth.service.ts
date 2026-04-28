@@ -117,6 +117,10 @@ export class AuthService {
     return this.http.post<{ message: string }>('/api/auth/resend-verification', {});
   }
 
+  resendVerificationByEmail(email: string) {
+    return this.http.post<{ message: string }>('/api/auth/resend-verification-email', { email });
+  }
+
   logout() {
     localStorage.removeItem('accessToken');
     this.currentUser.set(null);

@@ -17,6 +17,10 @@ export class LoginComponent {
   loading = signal(false);
   submitted = false;
 
+  emailNotVerified = signal(false);
+  resendLoading = signal(false);
+  resendSent = signal(false);
+
   private auth = inject(AuthService);
   private router = inject(Router);
 
@@ -42,6 +46,8 @@ export class LoginComponent {
     if (this.emailError || this.passwordError) return;
 
     this.error.set('');
+    this.emailNotVerified.set(false);
+    this.resendSent.set(false);
     this.loading.set(true);
 
     this.auth.login({ email: this.email, password: this.password }).subscribe({
@@ -50,10 +56,27 @@ export class LoginComponent {
         this.router.navigate([destination]);
       },
       error: (err) => {
-        this.error.set(err.error?.message === 'Invalid credentials'
-          ? 'Nesprávny e-mail alebo heslo'
-          : 'Prihlásenie zlyhalo');
         this.loading.set(false);
+        if (err.error?.message === 'Email not verified') {
+          this.emailNotVerified.set(true);
+        } else {
+          this.error.set(err.error?.message === 'Invalid credentials'
+            ? 'Nesprávny e-mail alebo heslo'
+            : 'Prihlásenie zlyhalo');
+        }
+      },
+    });
+  }
+
+  resendVerification() {
+    this.resendLoading.set(true);
+    this.auth.resendVerificationByEmail(this.email).subscribe({
+      next: () => {
+        this.resendSent.set(true);
+        this.resendLoading.set(false);
+      },
+      error: () => {
+        this.resendLoading.set(false);
       },
     });
   }
