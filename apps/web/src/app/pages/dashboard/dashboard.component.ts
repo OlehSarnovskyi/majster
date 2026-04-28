@@ -110,7 +110,9 @@ export class DashboardComponent implements OnInit {
       next: () => {
         this.loadBookings();
         const msg =
-          status === 'CONFIRMED' ? 'Rezervácia potvrdená' : 'Rezervácia zrušená';
+          status === 'CONFIRMED' ? 'Rezervácia potvrdená' :
+          status === 'COMPLETED' ? 'Rezervácia dokončená' :
+          'Rezervácia zrušená';
         this.toast.success(msg);
       },
     });
