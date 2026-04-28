@@ -71,10 +71,11 @@
             [class.form-field__input--error]="passwordError"
             type="password"
             id="reg-password"
-            placeholder="Min. 6 znakov"
+            placeholder="Min. 8 znakov"
             [(ngModel)]="password"
             name="password"
-            minlength="6"
+            minlength="8"
+            maxlength="72"
             (blur)="submitted = true"
           />
           @if (passwordError) {

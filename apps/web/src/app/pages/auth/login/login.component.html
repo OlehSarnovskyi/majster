@@ -38,6 +38,7 @@
             placeholder="••••••••"
             [(ngModel)]="password"
             name="password"
+            maxlength="72"
             (blur)="submitted = true"
           />
           @if (passwordError) {

@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class RegisterDto {
@@ -8,6 +8,7 @@ export class RegisterDto {
 
   @IsString()
   @MinLength(8)
+  @MaxLength(72)
   password: string;
 
   @IsString()
