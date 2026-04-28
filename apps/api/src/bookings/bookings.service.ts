@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   NotFoundException,
   ForbiddenException,
   BadRequestException,
@@ -11,6 +12,8 @@ import { BookingStatus } from '@prisma/client';
 
 @Injectable()
 export class BookingsService {
+  private readonly logger = new Logger(BookingsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService
@@ -76,7 +79,9 @@ export class BookingsService {
       },
     });
 
-    await this.emailService.sendNewBookingNotification(booking);
+    this.emailService.sendNewBookingNotification(booking).catch((err) =>
+      this.logger.error('Failed to send new booking notification', err)
+    );
 
     return booking;
   }
@@ -163,7 +168,9 @@ export class BookingsService {
       },
     });
 
-    await this.emailService.sendBookingStatusUpdate(updated);
+    this.emailService.sendBookingStatusUpdate(updated).catch((err) =>
+      this.logger.error('Failed to send booking status update email', err)
+    );
 
     return updated;
   }

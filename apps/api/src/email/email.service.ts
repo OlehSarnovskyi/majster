@@ -75,11 +75,15 @@ export class EmailService implements OnModuleInit {
       COMPLETED: 'dokončená',
     };
     const statusText = statusMap[booking.status ?? ''] ?? booking.status;
+    const isCancelled = booking.status === 'CANCELLED';
+    const body = isCancelled
+      ? `Dobrý deň ${booking.client.firstName},\n\nVaša rezervácia na službu "${booking.service.name}" dňa ${new Date(booking.startTime).toLocaleString('sk-SK')} bola zrušená.\n\nMajster.sk`
+      : `Dobrý deň ${booking.client.firstName},\n\nVaša rezervácia na službu "${booking.service.name}" dňa ${new Date(booking.startTime).toLocaleString('sk-SK')} bola ${statusText} majstrom ${booking.master.firstName}.\n\nMajster.sk`;
 
     await this.sendMail(
       booking.client.email,
       `Rezervácia ${statusText}: ${booking.service.name}`,
-      `Dobrý deň ${booking.client.firstName},\n\nVaša rezervácia na službu "${booking.service.name}" dňa ${new Date(booking.startTime).toLocaleString('sk-SK')} bola ${statusText} majstrom ${booking.master.firstName}.\n\nMajster.sk`
+      body
     );
   }
 
