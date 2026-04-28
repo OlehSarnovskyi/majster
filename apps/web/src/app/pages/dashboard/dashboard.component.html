@@ -87,11 +87,16 @@
                     <p class="text-muted">{{ b.startTime | date:'medium' }}</p>
                   </div>
                   <div class="booking-card__right">
-                    <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
-                    @if (b.status === 'CONFIRMED') {
-                      @if (auth.isMaster()) {
-                        <button class="btn btn--primary btn--sm" (click)="updateStatus(b.id, 'COMPLETED')">Dokončiť</button>
+                    <div class="booking-card__btns">
+                      <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
+                      @if (b.status === 'CONFIRMED') {
+                        @if (auth.isMaster()) {
+                          <button class="btn btn--primary btn--sm" (click)="updateStatus(b.id, 'COMPLETED')">Dokončiť</button>
+                        }
+                        <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Zrušiť</button>
                       }
+                    </div>
+                    @if (b.status === 'CONFIRMED') {
                       <div class="booking-card__calendar">
                         <button class="btn btn--ghost btn--xs" title="Google Calendar" (click)="addToGoogleCalendar(b)">
                           <span class="material-icons-outlined">event</span> Google
