@@ -1,5 +1,5 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { Injectable, Logger } from '@nestjs/common';
+import { BrevoClient } from '@getbrevo/brevo';
 
 interface BookingEmailData {
   service: { name: string };
@@ -10,45 +10,23 @@ interface BookingEmailData {
 }
 
 @Injectable()
-export class EmailService implements OnModuleInit {
+export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: nodemailer.Transporter | null = null;
+  private readonly client: BrevoClient | null = null;
+  private readonly senderEmail: string;
+  private readonly senderName = 'Majster.sk';
 
   constructor() {
-    const host = process.env.SMTP_HOST;
-    const port = parseInt(process.env.SMTP_PORT || '587');
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
-    const from = process.env.SMTP_FROM;
+    const apiKey = process.env.BREVO_API_KEY;
+    this.senderEmail = process.env.BREVO_SENDER_EMAIL || 'noreply@majster.sk';
 
-    this.logger.log(
-      `SMTP config: host=${host ?? 'MISSING'} port=${port} user=${user ?? 'MISSING'} pass=${pass ? '***set***' : 'MISSING'} from=${from ?? 'MISSING'}`
-    );
-
-    if (host && user && pass) {
-      this.transporter = nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465, // true only for SSL port 465; port 587 uses STARTTLS
-        requireTLS: port === 587,
-        auth: { user, pass },
-      });
+    if (apiKey) {
+      this.client = new BrevoClient({ apiKey });
+      this.logger.log(`✅ Brevo configured | sender=${this.senderEmail}`);
     } else {
       this.logger.warn(
-        'SMTP not configured — emails will only be logged to console. Set SMTP_HOST, SMTP_USER, SMTP_PASS env vars.'
+        'Brevo not configured — emails will only be logged to console. Set BREVO_API_KEY env var.'
       );
-    }
-  }
-
-  async onModuleInit() {
-    if (!this.transporter) return;
-
-    try {
-      await this.transporter.verify();
-      this.logger.log('✅ SMTP connection verified successfully');
-    } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
-      this.logger.error(`❌ SMTP connection FAILED: ${msg}`, error instanceof Error ? error.stack : undefined);
     }
   }
 
@@ -109,8 +87,8 @@ export class EmailService implements OnModuleInit {
   async sendTestEmail(to: string) {
     await this.sendMail(
       to,
-      '✅ Test email — Majster.sk SMTP works!',
-      `Tento email bol odoslaný z produkčného servera Majster.sk.\n\nSMTP konfigurácia funguje správne!\n\nČas odoslania: ${new Date().toISOString()}\n\nMajster.sk`
+      '✅ Test email — Majster.sk Brevo works!',
+      `Tento email bol odoslaný z produkčného servera Majster.sk.\n\nBrevo konfigurácia funguje správne!\n\nČas odoslania: ${new Date().toISOString()}\n\nMajster.sk`
     );
   }
 
@@ -125,18 +103,22 @@ export class EmailService implements OnModuleInit {
   }
 
   private async sendMail(to: string, subject: string, text: string) {
-    if (!this.transporter) {
-      this.logger.log(`[DEV - no SMTP] Email to ${to} | Subject: ${subject}`);
+    if (!this.client) {
+      this.logger.log(`[DEV - no Brevo] Email to ${to} | Subject: ${subject}`);
       this.logger.debug(text);
       return;
     }
 
-    const from = process.env.SMTP_FROM || 'noreply@majster.sk';
-    this.logger.log(`Sending email to ${to} | Subject: ${subject} | From: ${from}`);
+    this.logger.log(`Sending email to ${to} | Subject: ${subject}`);
 
     try {
-      const info = await this.transporter.sendMail({ from, to, subject, text });
-      this.logger.log(`✅ Email sent to ${to} | MessageId: ${info.messageId}`);
+      await this.client.transactionalEmails.sendTransacEmail({
+        sender: { name: this.senderName, email: this.senderEmail },
+        to: [{ email: to }],
+        subject,
+        textContent: text,
+      });
+      this.logger.log(`✅ Email sent to ${to}`);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : String(error);
       this.logger.error(`❌ Failed to send email to ${to}: ${msg}`, error instanceof Error ? error.stack : undefined);
