@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-footer',
@@ -11,9 +10,4 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class FooterComponent {
   year = new Date().getFullYear();
-  auth = inject(AuthService);
-
-  get joinAsMasterRoute(): string {
-    return this.auth.isLoggedIn() ? '/auth/choose-role' : '/auth/register';
-  }
 }
