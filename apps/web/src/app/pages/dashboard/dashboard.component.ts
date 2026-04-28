@@ -194,6 +194,18 @@ export class DashboardComponent implements OnInit {
       this.toast.error('Popis musí mať aspoň 10 znakov');
       return;
     }
+    if (!this.svcPrice || this.svcPrice <= 0) {
+      this.toast.error('Cena musí byť väčšia ako 0');
+      return;
+    }
+    if (!this.svcDuration || this.svcDuration < 5 || this.svcDuration > 480) {
+      this.toast.error('Trvanie musí byť medzi 5 a 480 minútami');
+      return;
+    }
+    if (!this.svcCategoryId) {
+      this.toast.error('Vyberte kategóriu');
+      return;
+    }
 
     this.savingService.set(true);
     const dto = {

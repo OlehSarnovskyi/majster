@@ -148,4 +148,9 @@ export class AuthService {
       )
     ).then(() => undefined);
   }
+
+  /** Ping the backend — used by MaintenanceBannerComponent to check if server is back up */
+  ping() {
+    return this.http.get('/api/auth/me');
+  }
 }

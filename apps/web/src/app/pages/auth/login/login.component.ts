@@ -57,7 +57,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        if (err.error?.message === 'Email not verified') {
+        if (err.error?.message === 'E-mail nie je overený') {
           this.emailNotVerified.set(true);
         } else {
           this.error.set(err.error?.message === 'Invalid credentials'

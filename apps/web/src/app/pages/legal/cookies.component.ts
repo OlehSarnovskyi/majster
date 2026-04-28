@@ -24,7 +24,7 @@ import { SeoService } from '../../core/services/seo.service';
           <tr><th>Názov</th><th>Účel</th><th>Platnosť</th></tr>
         </thead>
         <tbody>
-          <tr><td>accessToken</td><td>Prihlásenie používateľa (JWT token v localStorage)</td><td>7 dní</td></tr>
+          <tr><td>accessToken</td><td>Prihlásenie používateľa (JWT token v localStorage)</td><td>24 hodín</td></tr>
           <tr><td>cookie_consent</td><td>Uloženie vášho rozhodnutia o cookies</td><td>Trvalé</td></tr>
         </tbody>
       </table>

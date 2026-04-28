@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ServerStatusService } from '../../core/services/server-status.service';
-import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-maintenance-banner',
@@ -10,10 +10,10 @@ import { HttpClient } from '@angular/common/http';
 })
 export class MaintenanceBannerComponent {
   serverStatus = inject(ServerStatusService);
-  private http = inject(HttpClient);
+  private auth = inject(AuthService);
 
   retry() {
-    this.http.get('/api/auth/me').subscribe({
+    this.auth.ping().subscribe({
       next: () => this.serverStatus.markUp(),
       error: (err) => {
         if (err.status !== 0 && err.status !== 502 && err.status !== 503) {

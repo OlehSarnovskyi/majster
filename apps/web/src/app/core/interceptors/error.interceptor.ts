@@ -9,7 +9,7 @@ const ERROR_TRANSLATIONS: Record<string, string> = {
   'Unauthorized': 'Neautorizovaný prístup',
   'Forbidden': 'Prístup zamietnutý',
   'Invalid credentials': 'Nesprávny e-mail alebo heslo',
-  'Email not verified': 'E-mail nie je overený. Skontrolujte svoju schránku.',
+  'E-mail nie je overený': 'E-mail nie je overený. Skontrolujte svoju schránku.',
   'User already exists': 'Používateľ s týmto e-mailom už existuje',
   'User with this email already exists': 'Používateľ s týmto e-mailom už existuje',
   'Role already set': 'Rola je už nastavená',
@@ -74,7 +74,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       // Don't show toast for these — component handles the error UI itself
       const isSilent =
         (req.method === 'GET' && req.url.includes('/auth/me')) ||
-        (req.method === 'POST' && req.url.includes('/auth/login') && err.error?.message === 'Email not verified');
+        (req.method === 'POST' && req.url.includes('/auth/login') && err.error?.message === 'E-mail nie je overený');
 
       if (!isSilent) {
         let message: string;

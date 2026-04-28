@@ -77,7 +77,7 @@ export class AuthService {
     }
 
     if (!user.emailVerified) {
-      throw new UnauthorizedException('Email not verified');
+      throw new UnauthorizedException('E-mail nie je overený');
     }
 
     return this.buildAuthResponse(user);
