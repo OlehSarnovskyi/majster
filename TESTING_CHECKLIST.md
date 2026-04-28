@@ -185,14 +185,14 @@
 | 1. Registrácia email | ✅ | |
 | 2. Registrácia Google | ✅ | |
 | 3. Prihlásenie | ✅ | |
-| 4. Zabudnuté heslo | ✅ | |
+| 4. Zabudnuté heslo | ⬜ | |
 | 5. Výber roly | ✅ | |
 | 6. Profil | ✅ | |
 | 7. Kategórie & Služby | ✅ | |
 | 8. Majster — služby | ✅ | |
 | 9. Rezervácia | ✅ | |
 | 10. Správa rezervácií | ⬜ | |
-| 11. Odhlásenie | ⬜ | |
-| 12. Rate limiting | ⬜ | |
-| 13. Emaily | ⬜ | |
+| 11. Odhlásenie | ✅ | |
+| 12. Rate limiting | ✅ | |
+| 13. Emaily | ✅ | |
 | 14. UI/UX | ⬜ | |
