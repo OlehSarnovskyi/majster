@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -12,18 +13,22 @@ export class AuthCallbackComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private auth = inject(AuthService);
+  private http = inject(HttpClient);
 
   async ngOnInit() {
-    const token = this.route.snapshot.queryParamMap.get('token');
+    const isNew = this.route.snapshot.queryParamMap.get('new') === '1';
 
-    if (token) {
+    try {
+      const { token } = await this.http
+        .get<{ token: string }>('/api/auth/session', { withCredentials: true })
+        .toPromise() as { token: string };
+
       this.auth.handleGoogleCallback(token);
       await this.auth.whenReady;
-      // Redirect to choose-role if user hasn't chosen yet (new OR returning without choosing)
       const user = this.auth.user();
-      const destination = user && !user.roleChosen ? '/auth/choose-role' : '/dashboard';
+      const destination = (isNew || (user && !user.roleChosen)) ? '/auth/choose-role' : '/dashboard';
       this.router.navigate([destination], { replaceUrl: true });
-    } else {
+    } catch {
       this.router.navigate(['/auth/login'], { replaceUrl: true });
     }
   }

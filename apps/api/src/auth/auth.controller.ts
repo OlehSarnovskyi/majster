@@ -134,8 +134,30 @@ export class AuthController {
     }
 
     const result = await this.authService.googleLogin(req.user);
-    const newParam = result.isNewUser ? '&new=1' : '';
-    res.redirect(`${frontendUrl}/auth/callback?token=${result.accessToken}${newParam}`);
+    const newParam = result.isNewUser ? '?new=1' : '';
+
+    // Store token in a short-lived httpOnly cookie instead of exposing it in the URL
+    res.cookie('_oauth_token', result.accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 1000, // 60 seconds — just enough for the callback exchange
+    });
+
+    res.redirect(`${frontendUrl}/auth/callback${newParam}`);
+  }
+
+  @Get('session')
+  exchangeOAuthToken(
+    @Request() req: { cookies?: Record<string, string> },
+    @Res() res: Response
+  ) {
+    const token = req.cookies?.['_oauth_token'];
+    if (!token) {
+      return res.status(401).json({ message: 'No session token' });
+    }
+    res.clearCookie('_oauth_token');
+    return res.json({ token });
   }
 
   @UseGuards(JwtAuthGuard)
