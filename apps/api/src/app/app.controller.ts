@@ -19,13 +19,13 @@ export class AppController {
   }
 
   /**
-   * Test SMTP delivery. Call with ?to=your@email.com
-   * Example: GET /api/health/smtp?to=you@gmail.com
+   * Test Brevo email delivery. Call with ?to=your@email.com
+   * Example: GET /api/health/email?to=you@gmail.com
    * Protected by a shared secret — set HEALTH_SECRET env var, pass as ?secret=...
    */
-  @Get('health/smtp')
+  @Get('health/email')
   @SkipThrottle()
-  async testSmtp(@Query('to') to: string, @Query('secret') secret: string) {
+  async testEmail(@Query('to') to: string, @Query('secret') secret: string) {
     const expectedSecret = process.env.HEALTH_SECRET;
 
     if (expectedSecret && secret !== expectedSecret) {
@@ -33,17 +33,17 @@ export class AppController {
     }
 
     if (!to) {
-      return { ok: false, error: 'Missing ?to= query param. Usage: /api/health/smtp?to=you@email.com' };
+      return { ok: false, error: 'Missing ?to= query param. Usage: /api/health/email?to=you@email.com' };
     }
 
-    this.logger.log(`SMTP test requested → sending to ${to}`);
+    this.logger.log(`Brevo email test requested → sending to ${to}`);
 
     try {
       await this.emailService.sendTestEmail(to);
       return { ok: true, message: `Test email sent to ${to}. Check your inbox (and spam folder).` };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
-      this.logger.error(`SMTP test failed: ${msg}`);
+      this.logger.error(`Brevo email test failed: ${msg}`);
       return { ok: false, error: msg };
     }
   }

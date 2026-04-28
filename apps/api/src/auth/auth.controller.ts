@@ -216,12 +216,14 @@ export class AuthController {
     return this.authService.updateAvatar(req.user.id, avatarUrl);
   }
 
+  @Throttle({ auth: { limit: 10, ttl: 900000 } }) // 10 per 15 min
   @Get('verify-email')
   verifyEmail(@Query('token') token: string) {
     if (!token) throw new BadRequestException('Token is required');
     return this.authService.verifyEmail(token);
   }
 
+  @Throttle({ auth: { limit: 3, ttl: 900000 } }) // 3 per 15 min
   @UseGuards(JwtAuthGuard)
   @Post('resend-verification')
   resendVerification(@Request() req: { user: { id: string } }) {

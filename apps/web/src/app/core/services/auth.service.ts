@@ -58,11 +58,6 @@ export class AuthService {
       .pipe(tap((res) => this.handleAuth(res)));
   }
 
-  needsRoleSelection(): boolean {
-    const user = this.currentUser();
-    return !!user && !user.roleChosen;
-  }
-
   loginWithGoogle() {
     window.location.href = '/api/auth/google';
   }

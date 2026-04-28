@@ -69,14 +69,6 @@ export class ServicesService {
     return service;
   }
 
-  async findByMaster(masterId: string) {
-    return this.prisma.service.findMany({
-      where: { masterId },
-      include: { category: true },
-      orderBy: { createdAt: 'desc' },
-    });
-  }
-
   async update(id: string, masterId: string, dto: UpdateServiceDto) {
     const service = await this.prisma.service.findUnique({ where: { id } });
 

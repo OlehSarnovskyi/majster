@@ -12,8 +12,22 @@ async function bootstrap() {
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 
-  // Security headers (CSP disabled — Angular's runtime is incompatible with strict CSP without nonce support)
-  app.use(helmet({ contentSecurityPolicy: false }));
+  // Security headers with permissive CSP compatible with Angular SPA
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc:  ["'self'"],
+        scriptSrc:   ["'self'"],
+        styleSrc:    ["'self'", "'unsafe-inline'"], // Angular inlines critical styles
+        imgSrc:      ["'self'", 'data:', 'https:', 'blob:'],
+        fontSrc:     ["'self'", 'data:'],
+        connectSrc:  ["'self'"],
+        frameAncestors: ["'none'"],
+        baseUri:     ["'self'"],
+        objectSrc:   ["'none'"],
+      },
+    },
+  }));
 
   // Cookie parser (needed for OAuth state verification)
   app.use(cookieParser());

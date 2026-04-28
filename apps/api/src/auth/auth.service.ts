@@ -238,14 +238,11 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
+    // Always return success to prevent user enumeration (GDPR + security)
     const user = await this.prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
-      throw new BadRequestException('Účet s týmto e-mailom neexistuje');
-    }
-
-    if (!user.password) {
-      throw new BadRequestException('Tento účet používa prihlásenie cez Google. Heslo nie je nastavené.');
+    if (!user || !user.password) {
+      return { message: 'Reset link sent' };
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
@@ -256,7 +253,9 @@ export class AuthService {
       data: { resetToken, resetTokenExpiry },
     });
 
-    await this.emailService.sendPasswordResetEmail(user.email, user.firstName, resetToken);
+    this.emailService.sendPasswordResetEmail(user.email, user.firstName, resetToken).catch((err) =>
+      this.logger.error('Failed to send password reset email', err)
+    );
 
     return { message: 'Reset link sent' };
   }

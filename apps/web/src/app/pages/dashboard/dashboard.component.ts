@@ -115,6 +115,9 @@ export class DashboardComponent implements OnInit {
           'Rezervácia zrušená';
         this.toast.success(msg);
       },
+      error: () => {
+        this.loadBookings(); // reload to show actual state
+      },
     });
   }
 

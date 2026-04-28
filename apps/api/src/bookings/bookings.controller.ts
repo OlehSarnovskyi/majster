@@ -36,20 +36,6 @@ export class BookingsController {
     return this.bookingsService.findClientBookings(req.user.id);
   }
 
-  @Get('client')
-  @UseGuards(RolesGuard)
-  @Roles(Role.CLIENT)
-  findClientBookings(@Request() req: { user: { id: string } }) {
-    return this.bookingsService.findClientBookings(req.user.id);
-  }
-
-  @Get('master')
-  @UseGuards(RolesGuard)
-  @Roles(Role.MASTER)
-  findMasterBookings(@Request() req: { user: { id: string } }) {
-    return this.bookingsService.findMasterBookings(req.user.id);
-  }
-
   @Patch(':id/status')
   updateStatus(
     @Request() req: { user: { id: string } },
