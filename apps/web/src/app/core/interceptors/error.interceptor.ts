@@ -47,6 +47,7 @@ const STATUS_TRANSLATIONS: Record<number, string> = {
 function translateError(msg: string): string {
   if (ERROR_TRANSLATIONS[msg]) return ERROR_TRANSLATIONS[msg];
   // class-validator messages
+  if (msg.includes('ThrottlerException') || msg.includes('Too Many Requests')) return 'Príliš veľa pokusov. Skúste to o chvíľu';
   if (msg.includes('must be an email')) return 'Zadajte platný e-mail';
   if (msg.includes('must be')) return 'Neplatná hodnota v jednom z polí';
   if (msg.includes('should not be empty')) return 'Vyplňte všetky povinné polia';

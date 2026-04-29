@@ -70,7 +70,13 @@ export class BookingComponent implements OnInit {
       .subscribe({
         next: () => this.router.navigate(['/dashboard']),
         error: (err) => {
-          this.error.set(err.error?.message || 'Nepodarilo sa vytvoriť rezerváciu');
+          const raw = err.error?.message;
+          const translations: Record<string, string> = {
+            'Booking time must be in the future': 'Čas rezervácie musí byť v budúcnosti',
+            'Service not found': 'Služba nebola nájdená',
+            'Master not found': 'Majster nebol nájdený',
+          };
+          this.error.set(translations[raw] ?? raw ?? 'Nepodarilo sa vytvoriť rezerváciu');
           this.submitting.set(false);
         },
       });
