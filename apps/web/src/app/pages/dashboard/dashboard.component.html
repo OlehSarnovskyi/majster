@@ -38,7 +38,7 @@
                   <div class="booking-card__info">
                     <h3>{{ b.service.name }}</h3>
                     <p class="text-muted">
-                      {{ b.startTime | date:'medium' }} &mdash; {{ b.service.durationMinutes }} min
+                      {{ b.startTime | date:'d. M. yyyy, HH:mm' }} &mdash; {{ b.service.durationMinutes }} min
                     </p>
                     @if (auth.isMaster() && b.client) {
                       <p class="booking-card__person">Klient: {{ b.client.firstName }} {{ b.client.lastName }}</p>
@@ -84,7 +84,7 @@
                 <div class="booking-card__main">
                   <div class="booking-card__info">
                     <h3>{{ b.service.name }}</h3>
-                    <p class="text-muted">{{ b.startTime | date:'medium' }}</p>
+                    <p class="text-muted">{{ b.startTime | date:'d. M. yyyy, HH:mm' }}</p>
                   </div>
                   <div class="booking-card__right">
                     <div class="booking-card__btns">
