@@ -40,6 +40,6 @@ export class AppModule implements NestModule {
       .exclude(
         { path: 'api/auth/google/callback', method: RequestMethod.GET }, // Google redirects back
       )
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
   }
 }
