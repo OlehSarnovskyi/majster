@@ -12,22 +12,10 @@ async function bootstrap() {
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 
-  // Security headers with permissive CSP compatible with Angular SPA
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc:  ["'self'"],
-        scriptSrc:   ["'self'"],
-        styleSrc:    ["'self'", "'unsafe-inline'"], // Angular inlines critical styles
-        imgSrc:      ["'self'", 'data:', 'https:', 'blob:'],
-        fontSrc:     ["'self'", 'data:'],
-        connectSrc:  ["'self'"],
-        frameAncestors: ["'none'"],
-        baseUri:     ["'self'"],
-        objectSrc:   ["'none'"],
-      },
-    },
-  }));
+  // CSP disabled — Angular SPA requires 'unsafe-inline' for event handlers and
+  // external font sources (Material Icons CDN), which defeats XSS protection.
+  // Proper fix requires Angular nonce support (ngCspNonce) — future task.
+  app.use(helmet({ contentSecurityPolicy: false }));
 
   // Cookie parser (needed for OAuth state verification)
   app.use(cookieParser());
