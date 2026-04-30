@@ -121,6 +121,10 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  isPast(startTime: string): boolean {
+    return new Date(startTime) < new Date();
+  }
+
   statusLabel(status: string): string {
     return STATUS_SK[status] || status;
   }

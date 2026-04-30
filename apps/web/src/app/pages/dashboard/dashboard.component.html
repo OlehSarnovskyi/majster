@@ -82,7 +82,7 @@
                     <div class="booking-card__btns">
                       <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
                       @if (b.status === 'CONFIRMED') {
-                        @if (auth.isMaster()) {
+                        @if (auth.isMaster() && isPast(b.startTime)) {
                           <button class="btn btn--primary btn--sm" (click)="updateStatus(b.id, 'COMPLETED')">Dokončiť</button>
                         }
                         <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Zrušiť</button>
