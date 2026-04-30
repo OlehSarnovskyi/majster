@@ -53,6 +53,10 @@ body {
   min-height: 100vh;
 }
 
+main {
+  padding-top: var(--header-height);
+}
+
 a {
   color: var(--color-primary);
   text-decoration: none;
