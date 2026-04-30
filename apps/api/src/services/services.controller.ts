@@ -10,7 +10,6 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { SkipThrottle } from '@nestjs/throttler';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -22,7 +21,6 @@ import { Role } from '@prisma/client';
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
-  @SkipThrottle()
   @Get()
   findAll(
     @Query('categoryId') categoryId?: string,
@@ -31,7 +29,6 @@ export class ServicesController {
     return this.servicesService.findAll({ categoryId, masterId });
   }
 
-  @SkipThrottle()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.servicesService.findOne(id);
