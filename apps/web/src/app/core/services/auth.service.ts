@@ -47,9 +47,10 @@ export class AuthService {
     firstName: string;
     lastName: string;
   }) {
-    return this.http
-      .post<AuthResponse>('/api/auth/register', dto)
-      .pipe(tap((res) => this.handleAuth(res)));
+    return this.http.post<{ message: string; email: string }>(
+      '/api/auth/register',
+      dto
+    );
   }
 
   login(dto: { email: string; password: string }) {

@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { RouterLink, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -10,19 +10,30 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email = '';
   password = '';
   error = signal('');
   loading = signal(false);
   submitted = false;
 
+  justRegistered = signal(false);
   emailNotVerified = signal(false);
   resendLoading = signal(false);
   resendSent = signal(false);
 
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  ngOnInit() {
+    const params = this.route.snapshot.queryParamMap;
+    if (params.get('registered') === '1') {
+      this.justRegistered.set(true);
+      const email = params.get('email');
+      if (email) this.email = email;
+    }
+  }
 
   loginWithGoogle() {
     this.auth.loginWithGoogle();

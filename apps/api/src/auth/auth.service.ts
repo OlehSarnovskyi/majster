@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   ConflictException,
   UnauthorizedException,
   BadRequestException,
@@ -14,6 +15,8 @@ import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -52,13 +55,17 @@ export class AuthService {
     // Send both emails async — don't block registration if they fail
     this.emailService
       .sendEmailVerification(user.email, user.firstName, emailVerificationToken)
-      .catch((err) => console.error('Verification email failed:', err));
+      .catch((err) => this.logger.error('Failed to send verification email', err));
 
     this.emailService
       .sendWelcomeEmail(user.email, user.firstName)
-      .catch((err) => console.error('Welcome email failed:', err));
+      .catch((err) => this.logger.error('Failed to send welcome email', err));
 
-    return this.buildAuthResponse(user);
+    // No JWT issued — user must verify email and log in
+    return {
+      message: 'Registration successful. Please check your email to verify your account.',
+      email: user.email,
+    };
   }
 
   async login(dto: { email: string; password: string }) {
@@ -124,7 +131,7 @@ export class AuthService {
         // Send welcome email async — don't block login if it fails
         this.emailService
           .sendWelcomeEmail(user.email, user.firstName)
-          .catch((err) => console.error('Welcome email failed:', err));
+          .catch((err) => this.logger.error('Failed to send welcome email', err));
       }
     }
 

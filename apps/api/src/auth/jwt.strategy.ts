@@ -3,13 +3,23 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from './auth.service';
 
+// auth.module.ts validates JWT_SECRET in production at startup; in dev a
+// shared fallback is used so the strategy stays in sync with the signing key.
+const JWT_SECRET =
+  process.env.JWT_SECRET ||
+  (process.env.NODE_ENV === 'production'
+    ? (() => {
+        throw new Error('JWT_SECRET environment variable is required in production');
+      })()
+    : 'dev-only-secret-change-in-production');
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'dev-only-secret-change-in-production',
+      secretOrKey: JWT_SECRET,
     });
   }
 

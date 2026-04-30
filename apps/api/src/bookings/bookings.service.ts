@@ -142,6 +142,21 @@ export class BookingsService {
       throw new NotFoundException('Booking not found');
     }
 
+    // State machine: PENDING → CONFIRMED|CANCELLED, CONFIRMED → COMPLETED|CANCELLED
+    // Terminal states (COMPLETED, CANCELLED) cannot transition further.
+    const validTransitions: Record<BookingStatus, BookingStatus[]> = {
+      [BookingStatus.PENDING]: [BookingStatus.CONFIRMED, BookingStatus.CANCELLED],
+      [BookingStatus.CONFIRMED]: [BookingStatus.COMPLETED, BookingStatus.CANCELLED],
+      [BookingStatus.COMPLETED]: [],
+      [BookingStatus.CANCELLED]: [],
+    };
+
+    if (!validTransitions[booking.status].includes(status)) {
+      throw new BadRequestException(
+        `Cannot transition booking from ${booking.status} to ${status}`
+      );
+    }
+
     if (status === BookingStatus.CANCELLED) {
       if (booking.clientId !== userId && booking.masterId !== userId) {
         throw new ForbiddenException();
@@ -152,6 +167,13 @@ export class BookingsService {
           'Only the master can confirm or complete bookings'
         );
       }
+    }
+
+    // Master cannot mark a booking as COMPLETED before its start time.
+    if (status === BookingStatus.COMPLETED && booking.startTime > new Date()) {
+      throw new BadRequestException(
+        'Cannot complete a booking before its start time'
+      );
     }
 
     const updated = await this.prisma.booking.update({

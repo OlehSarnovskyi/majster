@@ -28,7 +28,11 @@ export class AppController {
   async testEmail(@Query('to') to: string, @Query('secret') secret: string) {
     const expectedSecret = process.env.HEALTH_SECRET;
 
-    if (expectedSecret && secret !== expectedSecret) {
+    if (!expectedSecret) {
+      return { ok: false, error: 'Endpoint disabled — HEALTH_SECRET not configured' };
+    }
+
+    if (secret !== expectedSecret) {
       return { ok: false, error: 'Unauthorized — wrong or missing ?secret=' };
     }
 

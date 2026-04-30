@@ -81,7 +81,9 @@ export class RegisterComponent {
       })
       .subscribe({
         next: () => {
-          this.router.navigate(['/auth/choose-role']);
+          this.router.navigate(['/auth/login'], {
+            queryParams: { registered: '1', email: this.email },
+          });
         },
         error: (err) => {
           const msg = err.error?.message;

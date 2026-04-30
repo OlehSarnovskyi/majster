@@ -17,7 +17,7 @@ import { Throttle } from '@nestjs/throttler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
-import { extname, join } from 'path';
+import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import * as crypto from 'crypto';
 import { AuthService } from './auth.service';
@@ -191,8 +191,19 @@ export class AuthController {
       storage: diskStorage({
         destination: UPLOADS_DIR,
         filename: (_req, file, cb) => {
+          // Derive extension from MIME type whitelist — never trust originalname,
+          // which can be spoofed (e.g. avatar.jpg.exe → exe leaks through extname()).
+          const extByMime: Record<string, string> = {
+            'image/jpeg': '.jpg',
+            'image/png': '.png',
+            'image/webp': '.webp',
+          };
+          const ext = extByMime[file.mimetype];
+          if (!ext) {
+            return cb(new BadRequestException('Unsupported image type'), '');
+          }
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, uniqueSuffix + extname(file.originalname));
+          cb(null, uniqueSuffix + ext);
         },
       }),
       limits: { fileSize: 5 * 1024 * 1024 }, // 5MB

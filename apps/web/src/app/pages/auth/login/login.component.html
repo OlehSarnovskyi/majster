@@ -6,6 +6,15 @@
         <p class="text-muted">Prihláste sa do svojho účtu</p>
       </div>
 
+      @if (justRegistered()) {
+        <div class="auth-card__verify-notice">
+          <p>
+            <strong>Registrácia úspešná!</strong>
+            Na váš e-mail sme poslali overovací odkaz. Po overení sa môžete prihlásiť.
+          </p>
+        </div>
+      }
+
       @if (emailNotVerified()) {
         <div class="auth-card__verify-notice">
           <p>
