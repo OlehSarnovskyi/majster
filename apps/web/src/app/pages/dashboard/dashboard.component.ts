@@ -42,7 +42,6 @@ export class DashboardComponent implements OnInit {
   svcName = '';
   svcDesc = '';
   svcPrice = 0;
-  svcDuration = 60;
   svcCategoryId = '';
 
   pendingBookings = computed(() =>
@@ -173,7 +172,6 @@ export class DashboardComponent implements OnInit {
     this.svcName = '';
     this.svcDesc = '';
     this.svcPrice = 0;
-    this.svcDuration = 60;
     this.svcCategoryId = this.categories()[0]?.id || '';
     this.showServiceForm.set(true);
   }
@@ -183,7 +181,6 @@ export class DashboardComponent implements OnInit {
     this.svcName = svc.name;
     this.svcDesc = svc.description;
     this.svcPrice = Number(svc.price);
-    this.svcDuration = svc.durationMinutes;
     this.svcCategoryId = svc.categoryId;
     this.showServiceForm.set(true);
   }
@@ -205,10 +202,6 @@ export class DashboardComponent implements OnInit {
       this.toast.error('Cena musí byť väčšia ako 0');
       return;
     }
-    if (!this.svcDuration || this.svcDuration < 5 || this.svcDuration > 480) {
-      this.toast.error('Trvanie musí byť medzi 5 a 480 minútami');
-      return;
-    }
     if (!this.svcCategoryId) {
       this.toast.error('Vyberte kategóriu');
       return;
@@ -219,7 +212,6 @@ export class DashboardComponent implements OnInit {
       name: this.svcName,
       description: this.svcDesc,
       price: this.svcPrice,
-      durationMinutes: this.svcDuration,
       categoryId: this.svcCategoryId,
     };
 

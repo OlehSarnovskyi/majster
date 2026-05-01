@@ -34,10 +34,6 @@
                 <h3 class="service-card__name">{{ svc.name }}</h3>
                 <p class="service-card__desc">{{ svc.description }}</p>
                 <div class="service-card__meta">
-                  <span class="service-card__duration">
-                    <span class="material-icons-outlined">schedule</span>
-                    {{ svc.durationMinutes }} min
-                  </span>
                   @if (svc.master) {
                     <a [routerLink]="['/masters', svc.master.id]" class="service-card__master">
                       <span class="material-icons-outlined">person</span>

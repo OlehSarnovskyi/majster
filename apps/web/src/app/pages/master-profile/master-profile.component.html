@@ -50,10 +50,6 @@
                 </div>
                 <p class="svc-card__desc">{{ svc.description }}</p>
                 <div class="svc-card__footer">
-                  <span class="svc-card__duration">
-                    <span class="material-icons-outlined">schedule</span>
-                    {{ svc.durationMinutes }} min
-                  </span>
                   <a [routerLink]="['/booking', svc.id]" class="btn btn--primary btn--sm">Rezervovať</a>
                 </div>
               </div>

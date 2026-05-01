@@ -20,11 +20,6 @@ export class UpdateServiceDto {
   price?: number;
 
   @IsOptional()
-  @IsNumber()
-  @Min(15)
-  durationMinutes?: number;
-
-  @IsOptional()
   @IsUUID()
   categoryId?: string;
 }

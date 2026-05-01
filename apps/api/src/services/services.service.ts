@@ -16,6 +16,7 @@ export class ServicesService {
       data: {
         ...dto,
         price: dto.price,
+        durationMinutes: dto.durationMinutes ?? 120,
         masterId,
       },
       include: { category: true },

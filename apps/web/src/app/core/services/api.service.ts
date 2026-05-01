@@ -78,7 +78,6 @@ export class ApiService {
     name: string;
     description: string;
     price: number;
-    durationMinutes: number;
     categoryId: string;
   }) {
     return this.http.post<Service>('/api/services', dto);
@@ -90,7 +89,6 @@ export class ApiService {
       name: string;
       description: string;
       price: number;
-      durationMinutes: number;
       categoryId: string;
     }>
   ) {

@@ -1,7 +1,7 @@
 import {
   IsString,
   IsNumber,
-  IsInt,
+  IsOptional,
   Min,
   Max,
   MinLength,
@@ -28,10 +28,11 @@ export class CreateServiceDto {
   @Max(100000)
   price: number;
 
-  @IsInt()
+  @IsOptional()
+  @IsNumber()
   @Min(15)
   @Max(480)
-  durationMinutes: number;
+  durationMinutes?: number;
 
   @IsUUID()
   categoryId: string;
