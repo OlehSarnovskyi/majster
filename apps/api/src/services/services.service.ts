@@ -56,7 +56,6 @@ export class ServicesService {
             lastName: true,
             avatar: true,
             bio: true,
-            phone: true,
           },
         },
       },

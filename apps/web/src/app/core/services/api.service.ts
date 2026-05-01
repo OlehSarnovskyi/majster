@@ -113,6 +113,7 @@ export class ApiService {
   createBooking(dto: {
     serviceId: string;
     startTime: string;
+    address: string;
     note?: string;
   }) {
     return this.http.post<Booking>('/api/bookings', dto);

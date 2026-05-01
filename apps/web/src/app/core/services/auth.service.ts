@@ -68,9 +68,9 @@ export class AuthService {
     this._userLoaded = this.loadUser();
   }
 
-  updateRole(role: string) {
+  updateRole(role: string, phone?: string) {
     return this.http
-      .patch<AuthResponse>('/api/auth/role', { role })
+      .patch<AuthResponse>('/api/auth/role', { role, ...(phone && { phone }) })
       .pipe(tap((res) => this.handleAuth(res)));
   }
 

@@ -25,6 +25,27 @@
       </button>
     </div>
 
+    @if (selectedRole() === 'MASTER') {
+      <div class="form-field mt-3" [class.form-field--error]="phoneError">
+        <label class="form-field__label" for="master-phone">
+          Telefónne číslo <span class="text-danger">*</span>
+        </label>
+        <input
+          id="master-phone"
+          type="tel"
+          class="form-field__input"
+          [class.form-field__input--error]="phoneError"
+          [(ngModel)]="phone"
+          placeholder="+421 9XX XXX XXX"
+          maxlength="20"
+        />
+        @if (phoneError) {
+          <span class="form-field__error">{{ phoneError }}</span>
+        }
+        <span class="form-field__hint">Klienti ho uvidia až po potvrdení rezervácie</span>
+      </div>
+    }
+
     <button
       class="btn btn--primary btn--lg btn--full mt-3"
       [disabled]="!selectedRole() || loading()"

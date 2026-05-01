@@ -21,6 +21,7 @@ export class BookingComponent implements OnInit {
 
   date = '';
   time = '';
+  address = '';
   note = '';
 
   private api = inject(ApiService);
@@ -55,6 +56,10 @@ export class BookingComponent implements OnInit {
       this.error.set('Vyberte dátum a čas');
       return;
     }
+    if (!this.address.trim()) {
+      this.error.set('Zadajte adresu vykonania služby');
+      return;
+    }
 
     this.submitting.set(true);
     this.error.set('');
@@ -65,6 +70,7 @@ export class BookingComponent implements OnInit {
       .createBooking({
         serviceId: this.id(),
         startTime,
+        address: this.address.trim(),
         note: this.note || undefined,
       })
       .subscribe({

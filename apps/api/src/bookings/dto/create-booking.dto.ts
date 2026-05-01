@@ -1,4 +1,4 @@
-import { IsUUID, IsDateString, IsOptional, IsString } from 'class-validator';
+import { IsUUID, IsDateString, IsOptional, IsString, IsNotEmpty, MaxLength } from 'class-validator';
 
 export class CreateBookingDto {
   @IsUUID()
@@ -6,6 +6,11 @@ export class CreateBookingDto {
 
   @IsDateString()
   startTime: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(300)
+  address: string;
 
   @IsString()
   @IsOptional()

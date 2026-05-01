@@ -34,6 +34,18 @@
           </div>
 
           <div class="form-field">
+            <label class="form-field__label" for="booking-address">Adresa vykonania služby</label>
+            <input
+              id="booking-address"
+              type="text"
+              class="form-field__input"
+              [(ngModel)]="address"
+              placeholder="Ulica, číslo, mesto"
+              maxlength="300"
+            />
+          </div>
+
+          <div class="form-field">
             <label class="form-field__label" for="booking-note">Poznámka (voliteľné)</label>
             <textarea id="booking-note" class="form-field__input" [(ngModel)]="note" rows="3"
               placeholder="Opíšte, čo potrebujete..."></textarea>

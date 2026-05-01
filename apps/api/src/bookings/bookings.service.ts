@@ -66,6 +66,7 @@ export class BookingsService {
         serviceId: dto.serviceId,
         startTime,
         endTime,
+        address: dto.address,
         note: dto.note,
       },
       include: {
@@ -87,7 +88,7 @@ export class BookingsService {
   }
 
   async findClientBookings(clientId: string) {
-    return this.prisma.booking.findMany({
+    const bookings = await this.prisma.booking.findMany({
       where: { clientId },
       include: {
         service: { include: { category: true } },
@@ -103,10 +104,19 @@ export class BookingsService {
       },
       orderBy: { startTime: 'desc' },
     });
+
+    // Hide master phone until booking is CONFIRMED
+    return bookings.map((b) => ({
+      ...b,
+      master: {
+        ...b.master,
+        phone: b.status === 'CONFIRMED' ? b.master?.phone : null,
+      },
+    }));
   }
 
   async findMasterBookings(masterId: string) {
-    return this.prisma.booking.findMany({
+    const bookings = await this.prisma.booking.findMany({
       where: { masterId },
       include: {
         service: true,
@@ -122,6 +132,16 @@ export class BookingsService {
       },
       orderBy: { startTime: 'desc' },
     });
+
+    // Hide client phone and email until booking is CONFIRMED
+    return bookings.map((b) => ({
+      ...b,
+      client: {
+        ...b.client,
+        phone: b.status === 'CONFIRMED' ? b.client?.phone : null,
+        email: b.status === 'CONFIRMED' ? b.client?.email : null,
+      },
+    }));
   }
 
   async updateStatus(

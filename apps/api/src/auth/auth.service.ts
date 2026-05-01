@@ -138,7 +138,7 @@ export class AuthService {
     return { ...this.buildAuthResponse(user), isNewUser };
   }
 
-  async updateRole(userId: string, role: Role) {
+  async updateRole(userId: string, role: Role, phone?: string) {
     // Only allow role change for users who haven't chosen yet (still CLIENT from registration)
     const existing = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -150,9 +150,18 @@ export class AuthService {
     if (existing.roleChosen) {
       throw new ConflictException('Role already set');
     }
+    // Phone is mandatory for MASTERs
+    const resolvedPhone = phone?.trim() || existing.phone?.trim();
+    if (role === Role.MASTER && !resolvedPhone) {
+      throw new BadRequestException('Telefónne číslo je povinné pre rolu majstra');
+    }
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data: { role, roleChosen: true },
+      data: {
+        role,
+        roleChosen: true,
+        ...(resolvedPhone && { phone: resolvedPhone }),
+      },
     });
     return this.buildAuthResponse(user);
   }

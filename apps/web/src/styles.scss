@@ -224,6 +224,15 @@ h4 { font-size: 1.25rem; }
     font-size: 0.813rem;
     color: var(--color-error);
   }
+
+  &__hint {
+    font-size: 0.813rem;
+    color: var(--color-text-muted);
+  }
+}
+
+.text-danger {
+  color: var(--color-error);
 }
 
 // ===== Cards =====
