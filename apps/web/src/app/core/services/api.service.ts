@@ -41,8 +41,9 @@ export interface Booking {
   endTime: string;
   status: string;
   note: string | null;
+  address: string | null;
   service: Service;
-  client?: { id: string; firstName: string; lastName: string; email?: string; phone?: string };
+  client?: { id: string; firstName: string; lastName: string; email?: string | null; phone?: string | null };
   master?: Master;
 }
 

@@ -69,10 +69,35 @@
   gap: 8px;
 }
 
-.booking-card__person {
+.booking-card__person,
+.booking-card__contact,
+.booking-card__detail {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.875rem;
   color: var(--color-text-light);
   margin-top: 4px;
+
+  .material-icons-outlined {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.booking-card__contact {
+  .material-icons-outlined {
+    color: var(--color-primary);
+  }
 }
 
 .booking-card__note {

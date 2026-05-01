@@ -41,9 +41,21 @@
                       {{ b.startTime | date:'d. M. yyyy, HH:mm' }} &mdash; {{ b.service.durationMinutes }} min
                     </p>
                     @if (auth.isMaster() && b.client) {
-                      <p class="booking-card__person">Klient: {{ b.client.firstName }} {{ b.client.lastName }}</p>
+                      <p class="booking-card__person">
+                        <span class="material-icons-outlined">person</span>
+                        {{ b.client.firstName }} {{ b.client.lastName }}
+                      </p>
                     } @else if (b.master) {
-                      <p class="booking-card__person">Majster: {{ b.master.firstName }} {{ b.master.lastName }}</p>
+                      <p class="booking-card__person">
+                        <span class="material-icons-outlined">engineering</span>
+                        {{ b.master.firstName }} {{ b.master.lastName }}
+                      </p>
+                    }
+                    @if (b.address) {
+                      <p class="booking-card__detail">
+                        <span class="material-icons-outlined">location_on</span>
+                        {{ b.address }}
+                      </p>
                     }
                     @if (b.note) {
                       <p class="booking-card__note">"{{ b.note }}"</p>
@@ -77,6 +89,38 @@
                   <div class="booking-card__info">
                     <h3>{{ b.service.name }}</h3>
                     <p class="text-muted">{{ b.startTime | date:'d. M. yyyy, HH:mm' }}</p>
+                    @if (auth.isMaster() && b.client) {
+                      <p class="booking-card__person">
+                        <span class="material-icons-outlined">person</span>
+                        {{ b.client.firstName }} {{ b.client.lastName }}
+                      </p>
+                      @if (b.status === 'CONFIRMED' && b.client.phone) {
+                        <p class="booking-card__contact">
+                          <span class="material-icons-outlined">phone</span>
+                          <a href="tel:{{ b.client.phone }}">{{ b.client.phone }}</a>
+                        </p>
+                      }
+                    } @else if (b.master) {
+                      <p class="booking-card__person">
+                        <span class="material-icons-outlined">engineering</span>
+                        {{ b.master.firstName }} {{ b.master.lastName }}
+                      </p>
+                      @if (b.status === 'CONFIRMED' && b.master.phone) {
+                        <p class="booking-card__contact">
+                          <span class="material-icons-outlined">phone</span>
+                          <a href="tel:{{ b.master.phone }}">{{ b.master.phone }}</a>
+                        </p>
+                      }
+                    }
+                    @if (b.address) {
+                      <p class="booking-card__detail">
+                        <span class="material-icons-outlined">location_on</span>
+                        {{ b.address }}
+                      </p>
+                    }
+                    @if (b.note) {
+                      <p class="booking-card__note">"{{ b.note }}"</p>
+                    }
                   </div>
                   <div class="booking-card__right">
                     <div class="booking-card__btns">
