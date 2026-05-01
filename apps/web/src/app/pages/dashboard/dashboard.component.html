@@ -16,7 +16,7 @@
   @if (activeTab() === 'bookings') {
     @if (loading()) {
       @for (i of [1,2,3]; track i) {
-        <div class="skeleton mb-2" style="height: 100px; border-radius: var(--radius-lg)"></div>
+        <div class="skeleton mb-2" style="height: 110px; border-radius: var(--radius-lg)"></div>
       }
     } @else if (bookings().length === 0) {
       <div class="empty">
@@ -34,45 +34,58 @@
           @for (b of pendingBookings(); track b.id) {
             <div class="booking-card card">
               <div class="card__body">
-                <div class="booking-card__main">
-                  <div class="booking-card__info">
-                    <h3>{{ b.service.name }}</h3>
-                    <p class="text-muted">
-                      {{ b.startTime | date:'d. M. yyyy, HH:mm' }} &mdash; {{ b.service.durationMinutes }} min
-                    </p>
-                    @if (auth.isMaster() && b.client) {
-                      <p class="booking-card__person">
-                        <span class="material-icons-outlined">person</span>
-                        {{ b.client.firstName }} {{ b.client.lastName }}
-                      </p>
-                    } @else if (b.master) {
-                      <p class="booking-card__person">
-                        <span class="material-icons-outlined">engineering</span>
-                        {{ b.master.firstName }} {{ b.master.lastName }}
-                      </p>
-                    }
-                    @if (b.address) {
-                      <p class="booking-card__detail">
-                        <span class="material-icons-outlined">location_on</span>
-                        {{ b.address }}
-                      </p>
-                    }
-                    @if (b.note) {
-                      <p class="booking-card__note">"{{ b.note }}"</p>
-                    }
-                  </div>
-                  <div class="booking-card__actions">
-                    <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
-                    @if (auth.isMaster()) {
-                      <div class="booking-card__btns">
-                        <button class="btn btn--primary btn--sm" (click)="updateStatus(b.id, 'CONFIRMED')">Potvrdiť</button>
-                        <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Odmietnuť</button>
-                      </div>
-                    } @else {
-                      <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Zrušiť</button>
-                    }
-                  </div>
+
+                <!-- Row 1: service + status -->
+                <div class="booking-card__top">
+                  <h3 class="booking-card__title">{{ b.service.name }}</h3>
+                  <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
                 </div>
+
+                <!-- Row 2: date + duration -->
+                <p class="booking-card__meta">
+                  <span class="material-icons-outlined">calendar_today</span>
+                  {{ b.startTime | date:'dd.MM.yyyy, HH:mm' }}
+                  <span class="booking-card__sep">·</span>
+                  {{ b.service.durationMinutes }} min
+                </p>
+
+                <!-- Row 3: person + details -->
+                <div class="booking-card__details">
+                  @if (auth.isMaster() && b.client) {
+                    <span class="booking-card__chip">
+                      <span class="material-icons-outlined">person</span>
+                      {{ b.client.firstName }} {{ b.client.lastName }}
+                    </span>
+                  } @else if (b.master) {
+                    <span class="booking-card__chip">
+                      <span class="material-icons-outlined">engineering</span>
+                      {{ b.master.firstName }} {{ b.master.lastName }}
+                    </span>
+                  }
+                  @if (b.address) {
+                    <span class="booking-card__chip">
+                      <span class="material-icons-outlined">location_on</span>
+                      {{ b.address }}
+                    </span>
+                  }
+                  @if (b.note) {
+                    <span class="booking-card__chip booking-card__chip--note">
+                      <span class="material-icons-outlined">chat_bubble_outline</span>
+                      {{ b.note }}
+                    </span>
+                  }
+                </div>
+
+                <!-- Row 4: actions -->
+                <div class="booking-card__footer">
+                  @if (auth.isMaster()) {
+                    <button class="btn btn--primary btn--sm" (click)="updateStatus(b.id, 'CONFIRMED')">Potvrdiť</button>
+                    <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Odmietnuť</button>
+                  } @else {
+                    <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Zrušiť</button>
+                  }
+                </div>
+
               </div>
             </div>
           }
@@ -85,65 +98,80 @@
           @for (b of otherBookings(); track b.id) {
             <div class="booking-card card">
               <div class="card__body">
-                <div class="booking-card__main">
-                  <div class="booking-card__info">
-                    <h3>{{ b.service.name }}</h3>
-                    <p class="text-muted">{{ b.startTime | date:'d. M. yyyy, HH:mm' }}</p>
-                    @if (auth.isMaster() && b.client) {
-                      <p class="booking-card__person">
-                        <span class="material-icons-outlined">person</span>
-                        {{ b.client.firstName }} {{ b.client.lastName }}
-                      </p>
-                      @if (b.status === 'CONFIRMED' && b.client.phone) {
-                        <p class="booking-card__contact">
-                          <span class="material-icons-outlined">phone</span>
-                          <a href="tel:{{ b.client.phone }}">{{ b.client.phone }}</a>
-                        </p>
-                      }
-                    } @else if (b.master) {
-                      <p class="booking-card__person">
-                        <span class="material-icons-outlined">engineering</span>
-                        {{ b.master.firstName }} {{ b.master.lastName }}
-                      </p>
-                      @if (b.status === 'CONFIRMED' && b.master.phone) {
-                        <p class="booking-card__contact">
-                          <span class="material-icons-outlined">phone</span>
-                          <a href="tel:{{ b.master.phone }}">{{ b.master.phone }}</a>
-                        </p>
-                      }
-                    }
-                    @if (b.address) {
-                      <p class="booking-card__detail">
-                        <span class="material-icons-outlined">location_on</span>
-                        {{ b.address }}
-                      </p>
-                    }
-                    @if (b.note) {
-                      <p class="booking-card__note">"{{ b.note }}"</p>
-                    }
-                  </div>
-                  <div class="booking-card__right">
-                    <div class="booking-card__btns">
-                      <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
-                      @if (b.status === 'CONFIRMED') {
-                        @if (auth.isMaster() && isPast(b.startTime)) {
-                          <button class="btn btn--primary btn--sm" (click)="updateStatus(b.id, 'COMPLETED')">Dokončiť</button>
-                        }
-                        <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Zrušiť</button>
-                      }
-                    </div>
-                    @if (b.status === 'CONFIRMED') {
-                      <div class="booking-card__calendar">
-                        <button class="btn btn--ghost btn--xs" title="Google Calendar" (click)="addToGoogleCalendar(b)">
-                          <span class="material-icons-outlined">event</span> Google
-                        </button>
-                        <button class="btn btn--ghost btn--xs" title="Stiahnuť .ics" (click)="downloadIcs(b)">
-                          <span class="material-icons-outlined">download</span> .ics
-                        </button>
-                      </div>
-                    }
-                  </div>
+
+                <!-- Row 1: service + status -->
+                <div class="booking-card__top">
+                  <h3 class="booking-card__title">{{ b.service.name }}</h3>
+                  <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
                 </div>
+
+                <!-- Row 2: date + duration -->
+                <p class="booking-card__meta">
+                  <span class="material-icons-outlined">calendar_today</span>
+                  {{ b.startTime | date:'dd.MM.yyyy, HH:mm' }}
+                  <span class="booking-card__sep">·</span>
+                  {{ b.service.durationMinutes }} min
+                </p>
+
+                <!-- Row 3: person + phone + address + note -->
+                <div class="booking-card__details">
+                  @if (auth.isMaster() && b.client) {
+                    <span class="booking-card__chip">
+                      <span class="material-icons-outlined">person</span>
+                      {{ b.client.firstName }} {{ b.client.lastName }}
+                    </span>
+                    @if (b.status === 'CONFIRMED' && b.client.phone) {
+                      <a class="booking-card__chip booking-card__chip--contact" href="tel:{{ b.client.phone }}">
+                        <span class="material-icons-outlined">phone</span>
+                        {{ b.client.phone }}
+                      </a>
+                    }
+                  } @else if (b.master) {
+                    <span class="booking-card__chip">
+                      <span class="material-icons-outlined">engineering</span>
+                      {{ b.master.firstName }} {{ b.master.lastName }}
+                    </span>
+                    @if (b.status === 'CONFIRMED' && b.master.phone) {
+                      <a class="booking-card__chip booking-card__chip--contact" href="tel:{{ b.master.phone }}">
+                        <span class="material-icons-outlined">phone</span>
+                        {{ b.master.phone }}
+                      </a>
+                    }
+                  }
+                  @if (b.address) {
+                    <span class="booking-card__chip">
+                      <span class="material-icons-outlined">location_on</span>
+                      {{ b.address }}
+                    </span>
+                  }
+                  @if (b.note) {
+                    <span class="booking-card__chip booking-card__chip--note">
+                      <span class="material-icons-outlined">chat_bubble_outline</span>
+                      {{ b.note }}
+                    </span>
+                  }
+                </div>
+
+                <!-- Row 4: actions -->
+                @if (b.status === 'CONFIRMED') {
+                  <div class="booking-card__footer">
+                    <div class="booking-card__cal">
+                      <button class="btn btn--ghost btn--xs" (click)="addToGoogleCalendar(b)">
+                        <span class="material-icons-outlined">event</span> Google
+                      </button>
+                      <button class="btn btn--ghost btn--xs" (click)="downloadIcs(b)">
+                        <span class="material-icons-outlined">download</span> .ics
+                      </button>
+                    </div>
+                    <div class="booking-card__action-btns">
+                      @if (auth.isMaster() && isPast(b.startTime)) {
+                        <button class="btn btn--primary btn--sm" (click)="updateStatus(b.id, 'COMPLETED')">Dokončiť</button>
+                      }
+                      <button class="btn btn--ghost btn--sm" (click)="updateStatus(b.id, 'CANCELLED')">Zrušiť</button>
+                    </div>
+                  </div>
+                }
+
               </div>
             </div>
           }
