@@ -18,8 +18,10 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsString()
-  @Transform(({ value }) => value?.trim())
-  @Matches(/^\+?[0-9\s\-]{7,15}$/, { message: 'Invalid phone number format' })
+  @Transform(({ value }) => value?.trim() || undefined)
+  @Matches(/^\+?[\d\s\-\(\)]{9,20}$/, {
+    message: 'Zadajte platné telefónne číslo (napr. +421 900 123 456)',
+  })
   phone?: string;
 
   @IsOptional()

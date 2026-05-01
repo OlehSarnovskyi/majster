@@ -80,7 +80,29 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  private readonly PHONE_REGEX = /^\+?[\d\s\-\(\)]{9,20}$/;
+
+  get phoneError(): string {
+    const trimmed = this.phone.trim();
+    if (!trimmed) {
+      return this.auth.isMaster() ? 'Telefón je povinný pre majstrov' : '';
+    }
+    if (!this.PHONE_REGEX.test(trimmed)) {
+      return 'Zadajte platný formát (napr. +421 900 123 456)';
+    }
+    return '';
+  }
+
+  get canSave(): boolean {
+    return (
+      this.firstName.length >= 2 &&
+      this.lastName.length >= 2 &&
+      this.phoneError === ''
+    );
+  }
+
   save() {
+    if (!this.canSave) return;
     this.saving.set(true);
     this.saved.set(false);
     this.error.set('');
