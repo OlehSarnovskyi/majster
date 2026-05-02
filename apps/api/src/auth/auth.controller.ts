@@ -59,17 +59,12 @@ export class AuthController {
       return res.redirect(`${frontendUrl}/auth/login`);
     }
 
-    // Generate state and store HMAC in a short-lived cookie to prevent OAuth CSRF
-    const state = crypto.randomBytes(16).toString('hex');
+    // Stateless CSRF protection: state = random.HMAC(random)
+    // No cookie needed — works across different domains (Vercel + Render)
+    const random = crypto.randomBytes(16).toString('hex');
     const secret = process.env.JWT_SECRET || 'dev-only-secret-change-in-production';
-    const stateHmac = crypto.createHmac('sha256', secret).update(state).digest('hex');
-
-    res.cookie('_oauth_state', stateHmac, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 10 * 60 * 1000, // 10 minutes
-      sameSite: 'lax',
-    });
+    const hmac = crypto.createHmac('sha256', secret).update(random).digest('hex');
+    const state = `${random}.${hmac}`;
 
     const callbackUrl =
       process.env.GOOGLE_CALLBACK_URL ||
@@ -98,32 +93,26 @@ export class AuthController {
         lastName: string;
         avatar?: string;
       };
-      cookies?: Record<string, string>;
     },
     @Query('state') state: string,
     @Res() res: Response
   ) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
 
-    // Verify OAuth state to prevent CSRF
-    const cookieHmac = req.cookies?.['_oauth_state'];
-    res.clearCookie('_oauth_state');
-
-    if (!state || !cookieHmac) {
+    // Verify stateless HMAC state (no cookie required)
+    if (!state || !state.includes('.')) {
       return res.redirect(`${frontendUrl}/auth/login?error=oauth_error`);
     }
 
+    const [random, receivedHmac] = state.split('.');
     const secret = process.env.JWT_SECRET || 'dev-only-secret-change-in-production';
-    const expectedHmac = crypto
-      .createHmac('sha256', secret)
-      .update(state)
-      .digest('hex');
+    const expectedHmac = crypto.createHmac('sha256', secret).update(random).digest('hex');
 
     let valid = false;
     try {
       valid = crypto.timingSafeEqual(
         Buffer.from(expectedHmac, 'hex'),
-        Buffer.from(cookieHmac, 'hex')
+        Buffer.from(receivedHmac, 'hex')
       );
     } catch {
       valid = false;
@@ -134,30 +123,12 @@ export class AuthController {
     }
 
     const result = await this.authService.googleLogin(req.user);
-    const newParam = result.isNewUser ? '?new=1' : '';
 
-    // Store token in a short-lived httpOnly cookie instead of exposing it in the URL
-    res.cookie('_oauth_token', result.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 1000, // 60 seconds — just enough for the callback exchange
-    });
+    // Pass token directly in URL — no cross-domain cookie needed
+    const params = new URLSearchParams({ token: result.accessToken });
+    if (result.isNewUser) params.set('new', '1');
 
-    res.redirect(`${frontendUrl}/auth/callback${newParam}`);
-  }
-
-  @Get('session')
-  exchangeOAuthToken(
-    @Request() req: { cookies?: Record<string, string> },
-    @Res() res: Response
-  ) {
-    const token = req.cookies?.['_oauth_token'];
-    if (!token) {
-      return res.status(401).json({ message: 'No session token' });
-    }
-    res.clearCookie('_oauth_token');
-    return res.json({ token });
+    res.redirect(`${frontendUrl}/auth/callback?${params}`);
   }
 
   @UseGuards(JwtAuthGuard)
