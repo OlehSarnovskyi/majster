@@ -63,14 +63,24 @@ import { ConfirmService } from '../../core/services/confirm.service';
 
     .confirm-modal__actions {
       display: flex;
-      justify-content: flex-end;
+      flex-direction: column-reverse;
       gap: 8px;
-      flex-wrap: wrap;
 
       .btn {
-        flex: 1;
-        min-width: 120px;
+        width: 100%;
         justify-content: center;
+      }
+    }
+
+    @media (min-width: 400px) {
+      .confirm-modal__actions {
+        flex-direction: row;
+        justify-content: flex-end;
+
+        .btn {
+          width: auto;
+          flex: 1;
+        }
       }
     }
 
