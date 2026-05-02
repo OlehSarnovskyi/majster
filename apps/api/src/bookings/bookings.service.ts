@@ -126,12 +126,13 @@ export class BookingsService {
       orderBy: { startTime: 'desc' },
     });
 
-    // Hide master phone until booking is CONFIRMED
+    // Show master phone to client once booking exists (PENDING or CONFIRMED)
+    // so client can contact master if needed before confirmation
     return bookings.map((b) => ({
       ...b,
       master: {
         ...b.master,
-        phone: b.status === 'CONFIRMED' ? b.master?.phone : null,
+        phone: ['PENDING', 'CONFIRMED'].includes(b.status) ? b.master?.phone : null,
       },
     }));
   }
