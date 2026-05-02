@@ -1,6 +1,6 @@
 {
-  "installCommand": "pnpm install --frozen-lockfile",
-  "buildCommand": "pnpm nx build web --configuration=production",
+  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "npx nx build web --configuration=production",
   "outputDirectory": "dist/apps/web/browser",
   "rewrites": [
     {
