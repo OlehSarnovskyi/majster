@@ -1,4 +1,4 @@
-import { IsUUID, IsDateString, IsOptional, IsString, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsUUID, IsDateString, IsOptional, IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
 
 export class CreateBookingDto {
   @IsUUID()
@@ -9,6 +9,7 @@ export class CreateBookingDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(5, { message: 'Adresa musí mať aspoň 5 znakov' })
   @MaxLength(300)
   address: string;
 

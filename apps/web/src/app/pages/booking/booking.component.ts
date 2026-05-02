@@ -106,13 +106,20 @@ export class BookingComponent implements OnInit {
     this.selectedSlot = '';
   }
 
+  get addressError(): string {
+    const v = this.address.trim();
+    if (!v) return 'Adresa je povinná';
+    if (v.length < 5) return 'Adresa musí mať aspoň 5 znakov';
+    return '';
+  }
+
   submit() {
     if (!this.date || !this.selectedSlot) {
       this.error.set('Vyberte dátum a čas');
       return;
     }
-    if (!this.address.trim()) {
-      this.error.set('Zadajte adresu vykonania služby');
+    if (this.addressError) {
+      this.error.set(this.addressError);
       return;
     }
 
