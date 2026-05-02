@@ -20,11 +20,9 @@ async function bootstrap() {
   // Cookie parser (needed for OAuth state verification)
   app.use(cookieParser());
 
-  // CORS (dev only — in production, API and frontend are on the same origin)
-  if (process.env.NODE_ENV !== 'production') {
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
-    app.enableCors({ origin: frontendUrl, credentials: true });
-  }
+  // CORS — frontend is on a separate origin (Vercel)
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+  app.enableCors({ origin: frontendUrl, credentials: true });
 
   // Serve uploaded files
   app.useStaticAssets(join(process.cwd(), 'uploads'), {
@@ -38,25 +36,6 @@ async function bootstrap() {
       transform: true,
     })
   );
-
-  // Production: serve Angular build from same origin (no CORS needed)
-  if (process.env.NODE_ENV === 'production') {
-    const webBuildPath = join(process.cwd(), 'dist', 'apps', 'web', 'browser');
-    app.useStaticAssets(webBuildPath);
-
-    // SPA catch-all: serve index.html for client-side routes (non-API requests)
-    const expressApp = app.getHttpAdapter().getInstance();
-    expressApp.use(
-      (
-        req: { path: string },
-        res: { sendFile: (p: string) => void },
-        next: () => void
-      ) => {
-        if (req.path.startsWith('/api')) return next();
-        res.sendFile(join(webBuildPath, 'index.html'));
-      }
-    );
-  }
 
   const port = process.env.PORT || process.env.API_PORT || 3000;
   await app.listen(port);
