@@ -23,16 +23,45 @@
             <div class="alert alert--error mt-2">{{ error() }}</div>
           }
 
+          <!-- Date -->
           <div class="form-field mt-3">
             <label class="form-field__label" for="booking-date">Dátum</label>
-            <input id="booking-date" type="date" class="form-field__input" [(ngModel)]="date" [min]="minDate" />
+            <input
+              id="booking-date"
+              type="date"
+              class="form-field__input"
+              [(ngModel)]="date"
+              [min]="minDate"
+              (ngModelChange)="onDateChange()"
+            />
           </div>
 
+          <!-- Time slots -->
           <div class="form-field">
-            <label class="form-field__label" for="booking-time">Čas</label>
-            <input id="booking-time" type="time" class="form-field__input" [(ngModel)]="time" min="08:00" max="20:00" />
+            <label class="form-field__label">Čas</label>
+
+            @if (isDayOff) {
+              <div class="day-off">
+                <span class="material-icons-outlined">event_busy</span>
+                <span>Majster v tento deň nepracuje</span>
+              </div>
+            } @else if (availableSlots.length > 0) {
+              <div class="slot-grid">
+                @for (slot of availableSlots; track slot) {
+                  <button
+                    type="button"
+                    class="slot-btn"
+                    [class.slot-btn--selected]="selectedSlot === slot"
+                    (click)="selectedSlot = slot"
+                  >
+                    {{ slot }}
+                  </button>
+                }
+              </div>
+            }
           </div>
 
+          <!-- Address -->
           <div class="form-field">
             <label class="form-field__label" for="booking-address">Adresa vykonania služby</label>
             <input
@@ -45,13 +74,23 @@
             />
           </div>
 
+          <!-- Note -->
           <div class="form-field">
             <label class="form-field__label" for="booking-note">Poznámka (voliteľné)</label>
-            <textarea id="booking-note" class="form-field__input" [(ngModel)]="note" rows="3"
-              placeholder="Opíšte, čo potrebujete..."></textarea>
+            <textarea
+              id="booking-note"
+              class="form-field__input"
+              [(ngModel)]="note"
+              rows="3"
+              placeholder="Opíšte, čo potrebujete..."
+            ></textarea>
           </div>
 
-          <button class="btn btn--primary btn--full btn--lg" (click)="submit()" [disabled]="submitting()">
+          <button
+            class="btn btn--primary btn--full btn--lg"
+            (click)="submit()"
+            [disabled]="submitting() || !selectedSlot || isDayOff"
+          >
             @if (submitting()) {
               Rezervuje sa...
             } @else {

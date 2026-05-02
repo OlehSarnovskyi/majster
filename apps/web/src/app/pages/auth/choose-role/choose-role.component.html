@@ -44,10 +44,58 @@
         }
         <span class="form-field__hint">Klienti ho uvidia až po potvrdení rezervácie</span>
       </div>
+
+      <div class="schedule-editor mt-4">
+        <h3 class="schedule-editor__title">Pracovný rozvrh <span class="text-danger">*</span></h3>
+        <p class="schedule-editor__subtitle text-muted">Klienti budú môcť rezervovať len v dostupných časoch</p>
+
+        <div class="schedule-days">
+          @for (key of dayKeys; track key) {
+            <div class="schedule-day" [class.schedule-day--disabled]="!getDay(key).enabled">
+              <label class="schedule-day__toggle">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="workingHours[key].enabled"
+                />
+                <span class="schedule-day__name">{{ dayLabels[key] }}</span>
+              </label>
+
+              @if (getDay(key).enabled) {
+                <div class="schedule-day__times">
+                  <select
+                    class="schedule-day__select"
+                    [(ngModel)]="workingHours[key].from"
+                    (ngModelChange)="onFromChange(key)"
+                  >
+                    @for (t of timeOptions; track t) {
+                      <option [value]="t">{{ t }}</option>
+                    }
+                  </select>
+                  <span class="schedule-day__sep">—</span>
+                  <select
+                    class="schedule-day__select"
+                    [(ngModel)]="workingHours[key].to"
+                  >
+                    @for (t of toOptions(getDay(key).from); track t) {
+                      <option [value]="t">{{ t }}</option>
+                    }
+                  </select>
+                </div>
+              } @else {
+                <span class="schedule-day__closed">Zatvorené</span>
+              }
+            </div>
+          }
+        </div>
+
+        @if (scheduleError) {
+          <span class="form-field__error">{{ scheduleError }}</span>
+        }
+      </div>
     }
 
     <button
-      class="btn btn--primary btn--lg btn--full mt-3"
+      class="btn btn--primary btn--lg btn--full mt-4"
       [disabled]="!selectedRole() || loading()"
       (click)="confirm()"
     >

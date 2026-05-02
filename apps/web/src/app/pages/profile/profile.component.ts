@@ -4,6 +4,41 @@ import { AuthService } from '../../core/services/auth.service';
 import { SeoService } from '../../core/services/seo.service';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmService } from '../../core/services/confirm.service';
+import { WorkingHours, DaySchedule } from '../../core/services/api.service';
+
+const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
+type DayKey = (typeof DAY_KEYS)[number];
+
+const DAY_LABELS: Record<DayKey, string> = {
+  mon: 'Pondelok',
+  tue: 'Utorok',
+  wed: 'Streda',
+  thu: 'Štvrtok',
+  fri: 'Piatok',
+  sat: 'Sobota',
+  sun: 'Nedeľa',
+};
+
+function defaultWorkingHours(): WorkingHours {
+  return {
+    mon: { enabled: true,  from: '08:00', to: '18:00' },
+    tue: { enabled: true,  from: '08:00', to: '18:00' },
+    wed: { enabled: true,  from: '08:00', to: '18:00' },
+    thu: { enabled: true,  from: '08:00', to: '18:00' },
+    fri: { enabled: true,  from: '08:00', to: '18:00' },
+    sat: { enabled: false, from: '09:00', to: '14:00' },
+    sun: { enabled: false, from: '09:00', to: '14:00' },
+  };
+}
+
+function buildTimeOptions(): string[] {
+  const options: string[] = [];
+  for (let h = 6; h <= 22; h++) {
+    options.push(`${String(h).padStart(2, '0')}:00`);
+    if (h < 22) options.push(`${String(h).padStart(2, '0')}:30`);
+  }
+  return options;
+}
 
 @Component({
   selector: 'app-profile',
@@ -24,6 +59,11 @@ export class ProfileComponent implements OnInit {
   phone = '';
   bio = '';
 
+  readonly dayKeys = DAY_KEYS;
+  readonly dayLabels = DAY_LABELS;
+  readonly timeOptions = buildTimeOptions();
+  workingHours: WorkingHours = defaultWorkingHours();
+
   auth = inject(AuthService);
   private seo = inject(SeoService);
   private toast = inject(ToastService);
@@ -39,11 +79,30 @@ export class ProfileComponent implements OnInit {
       if (u.avatar) {
         this.avatarPreview.set(u.avatar);
       }
+      if (u.workingHours) {
+        this.workingHours = { ...defaultWorkingHours(), ...u.workingHours } as WorkingHours;
+      }
     }
   }
 
   ngOnInit() {
     this.seo.setPage('Upraviť profil');
+  }
+
+  getDay(key: DayKey): DaySchedule {
+    return this.workingHours[key];
+  }
+
+  toOptions(from: string): string[] {
+    return this.timeOptions.filter((t) => t > from);
+  }
+
+  onFromChange(key: DayKey) {
+    const day = this.workingHours[key];
+    if (day.to <= day.from) {
+      const next = this.toOptions(day.from)[0];
+      if (next) day.to = next;
+    }
   }
 
   onAvatarSelected(event: Event) {
@@ -61,12 +120,10 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // Show preview immediately
     const reader = new FileReader();
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
 
-    // Upload
     this.uploadingAvatar.set(true);
     this.auth.uploadAvatar(file).subscribe({
       next: () => {
@@ -107,24 +164,28 @@ export class ProfileComponent implements OnInit {
     this.saved.set(false);
     this.error.set('');
 
-    this.auth
-      .updateProfile({
-        firstName: this.firstName,
-        lastName: this.lastName,
-        phone: this.phone || undefined,
-        bio: this.bio || undefined,
-      })
-      .subscribe({
-        next: () => {
-          this.saving.set(false);
-          this.saved.set(true);
-          setTimeout(() => this.saved.set(false), 3000);
-        },
-        error: (err) => {
-          this.error.set(err.error?.message || 'Nepodarilo sa aktualizovať profil');
-          this.saving.set(false);
-        },
-      });
+    const dto: Parameters<typeof this.auth.updateProfile>[0] = {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      phone: this.phone || undefined,
+      bio: this.bio || undefined,
+    };
+
+    if (this.auth.isMaster()) {
+      dto.workingHours = this.workingHours;
+    }
+
+    this.auth.updateProfile(dto).subscribe({
+      next: () => {
+        this.saving.set(false);
+        this.saved.set(true);
+        setTimeout(() => this.saved.set(false), 3000);
+      },
+      error: (err) => {
+        this.error.set(err.error?.message || 'Nepodarilo sa aktualizovať profil');
+        this.saving.set(false);
+      },
+    });
   }
 
   async deleteAccount() {

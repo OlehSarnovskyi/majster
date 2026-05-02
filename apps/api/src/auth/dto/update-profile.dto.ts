@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MinLength, MaxLength, Matches } from 'class-validator';
+import { IsOptional, IsString, MinLength, MaxLength, Matches, IsObject } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateProfileDto {
@@ -29,4 +29,8 @@ export class UpdateProfileDto {
   @Transform(({ value }) => value?.trim())
   @MaxLength(1000)
   bio?: string;
+
+  @IsOptional()
+  @IsObject()
+  workingHours?: Record<string, { enabled: boolean; from: string; to: string }>;
 }

@@ -172,7 +172,7 @@ export class AuthController {
     @Request() req: { user: { id: string } },
     @Body() dto: UpdateRoleDto
   ) {
-    return this.authService.updateRole(req.user.id, dto.role as Role, dto.phone);
+    return this.authService.updateRole(req.user.id, dto.role as Role, dto.phone, dto.workingHours);
   }
 
   @UseGuards(JwtAuthGuard)

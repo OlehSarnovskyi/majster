@@ -1,7 +1,7 @@
 .role-page {
   min-height: calc(100vh - var(--header-height));
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 40px 20px;
   text-align: center;
@@ -69,8 +69,115 @@
   }
 }
 
+// ── Schedule editor ──────────────────────────────────────────────────────────
+.schedule-editor {
+  text-align: left;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  background: #fafafa;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  &__subtitle {
+    font-size: 0.813rem;
+    margin-bottom: 16px;
+  }
+}
+
+.schedule-days {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schedule-day {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 38px;
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+    width: 130px;
+
+    input[type='checkbox'] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  }
+
+  &__name {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  &--disabled &__name {
+    color: var(--color-text-muted);
+  }
+
+  &__times {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__select {
+    height: 34px;
+    padding: 0 6px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-family: var(--font-family);
+    background: white;
+    color: var(--color-text);
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__sep {
+    color: var(--color-text-muted);
+    font-size: 0.813rem;
+  }
+
+  &__closed {
+    font-size: 0.813rem;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+}
+
 @media (max-width: 480px) {
   .role-options {
     grid-template-columns: 1fr;
+  }
+
+  .schedule-day {
+    flex-wrap: wrap;
+    gap: 8px;
+
+    &__toggle {
+      width: 100%;
+    }
+
+    &__times {
+      padding-left: 24px;
+    }
   }
 }

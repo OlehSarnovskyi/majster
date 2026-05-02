@@ -9,6 +9,22 @@ export interface Category {
   _count: { services: number };
 }
 
+export interface DaySchedule {
+  enabled: boolean;
+  from: string; // "08:00"
+  to: string;   // "18:00"
+}
+
+export interface WorkingHours {
+  mon: DaySchedule;
+  tue: DaySchedule;
+  wed: DaySchedule;
+  thu: DaySchedule;
+  fri: DaySchedule;
+  sat: DaySchedule;
+  sun: DaySchedule;
+}
+
 export interface Master {
   id: string;
   firstName: string;
@@ -16,6 +32,7 @@ export interface Master {
   avatar: string | null;
   bio: string | null;
   phone?: string;
+  workingHours?: WorkingHours | null;
   _count?: { services: number };
   services?: Service[];
 }

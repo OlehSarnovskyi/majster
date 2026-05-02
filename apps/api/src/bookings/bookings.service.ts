@@ -39,6 +39,27 @@ export class BookingsService {
       throw new BadRequestException('Booking time must be in the future');
     }
 
+    // Validate against master's working hours if set
+    const workingHours = service.master.workingHours as Record<
+      string,
+      { enabled: boolean; from: string; to: string }
+    > | null;
+
+    if (workingHours) {
+      const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      const dayKey = dayNames[startTime.getDay()];
+      const day = workingHours[dayKey];
+
+      if (!day?.enabled) {
+        throw new BadRequestException('Time slot is outside master working hours');
+      }
+
+      const slotTime = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
+      if (slotTime < day.from || slotTime >= day.to) {
+        throw new BadRequestException('Time slot is outside master working hours');
+      }
+    }
+
     const endTime = new Date(
       startTime.getTime() + service.durationMinutes * 60000
     );

@@ -138,29 +138,26 @@ export class AuthService {
     return { ...this.buildAuthResponse(user), isNewUser };
   }
 
-  async updateRole(userId: string, role: Role, phone?: string) {
-    // Only allow role change for users who haven't chosen yet (still CLIENT from registration)
-    const existing = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
-    if (!existing) {
-      throw new UnauthorizedException();
-    }
-    // Prevent role escalation — only allow setting role once after registration
-    if (existing.roleChosen) {
-      throw new ConflictException('Role already set');
-    }
-    // Phone is mandatory for MASTERs
+  async updateRole(userId: string, role: Role, phone?: string, workingHours?: object) {
+    const existing = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!existing) throw new UnauthorizedException();
+    if (existing.roleChosen) throw new ConflictException('Role already set');
+
     const resolvedPhone = phone?.trim() || existing.phone?.trim();
     if (role === Role.MASTER && !resolvedPhone) {
       throw new BadRequestException('Telefónne číslo je povinné pre rolu majstra');
     }
+    if (role === Role.MASTER && !workingHours) {
+      throw new BadRequestException('Pracovný rozvrh je povinný pre rolu majstra');
+    }
+
     const user = await this.prisma.user.update({
       where: { id: userId },
       data: {
         role,
         roleChosen: true,
         ...(resolvedPhone && { phone: resolvedPhone }),
+        ...(workingHours && { workingHours }),
       },
     });
     return this.buildAuthResponse(user);
@@ -168,7 +165,7 @@ export class AuthService {
 
   async updateProfile(
     userId: string,
-    dto: { firstName?: string; lastName?: string; phone?: string; bio?: string }
+    dto: { firstName?: string; lastName?: string; phone?: string; bio?: string; workingHours?: object }
   ) {
     return this.prisma.user.update({
       where: { id: userId },
@@ -232,6 +229,7 @@ export class AuthService {
         bio: true,
         role: true,
         roleChosen: true,
+        workingHours: true,
       },
     });
   }
@@ -341,6 +339,7 @@ export class AuthService {
     lastName: string;
     role: string;
     roleChosen: boolean;
+    workingHours?: unknown;
   }) {
     const payload = { sub: user.id, email: user.email, role: user.role };
     return {
@@ -352,6 +351,7 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
         roleChosen: user.roleChosen,
+        workingHours: user.workingHours ?? null,
       },
     };
   }
