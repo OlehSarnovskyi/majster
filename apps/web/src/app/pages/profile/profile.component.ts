@@ -50,14 +50,16 @@ function buildTimeOptions(): string[] {
 export class ProfileComponent implements OnInit {
   saving = signal(false);
   saved = signal(false);
-  error = signal('');
   uploadingAvatar = signal(false);
   avatarPreview = signal<string | null>(null);
+  isDirty = signal(false);
 
   firstName = '';
   lastName = '';
   phone = '';
   bio = '';
+
+  markDirty() { this.isDirty.set(true); this.saved.set(false); }
 
   readonly dayKeys = DAY_KEYS;
   readonly dayLabels = DAY_LABELS;
@@ -161,8 +163,6 @@ export class ProfileComponent implements OnInit {
   save() {
     if (!this.canSave) return;
     this.saving.set(true);
-    this.saved.set(false);
-    this.error.set('');
 
     const dto: Parameters<typeof this.auth.updateProfile>[0] = {
       firstName: this.firstName,
@@ -179,10 +179,12 @@ export class ProfileComponent implements OnInit {
       next: () => {
         this.saving.set(false);
         this.saved.set(true);
+        this.isDirty.set(false);
+        this.toast.success('Profil bol úspešne aktualizovaný');
         setTimeout(() => this.saved.set(false), 3000);
       },
       error: (err) => {
-        this.error.set(err.error?.message || 'Nepodarilo sa aktualizovať profil');
+        this.toast.error(err.error?.message || 'Nepodarilo sa aktualizovať profil');
         this.saving.set(false);
       },
     });
