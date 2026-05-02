@@ -43,9 +43,8 @@ import { ConfirmService } from '../../core/services/confirm.service';
       z-index: 2001;
       background: white;
       border-radius: var(--radius-lg);
-      padding: 28px;
-      width: 90%;
-      max-width: 400px;
+      padding: 24px;
+      width: min(90vw, 400px);
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
       animation: scaleIn 0.2s ease-out;
 
@@ -66,6 +65,13 @@ import { ConfirmService } from '../../core/services/confirm.service';
       display: flex;
       justify-content: flex-end;
       gap: 8px;
+      flex-wrap: wrap;
+
+      .btn {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+      }
     }
 
     :host ::ng-deep .btn--danger-fill {
