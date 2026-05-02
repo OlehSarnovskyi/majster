@@ -52,14 +52,11 @@ export class ProfileComponent implements OnInit {
   saved = signal(false);
   uploadingAvatar = signal(false);
   avatarPreview = signal<string | null>(null);
-  isDirty = signal(false);
 
   firstName = '';
   lastName = '';
   phone = '';
   bio = '';
-
-  markDirty() { this.isDirty.set(true); this.saved.set(false); }
 
   readonly dayKeys = DAY_KEYS;
   readonly dayLabels = DAY_LABELS;
@@ -179,7 +176,6 @@ export class ProfileComponent implements OnInit {
       next: () => {
         this.saving.set(false);
         this.saved.set(true);
-        this.isDirty.set(false);
         this.toast.success('Profil bol úspešne aktualizovaný');
         setTimeout(() => this.saved.set(false), 3000);
       },
