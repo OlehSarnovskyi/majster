@@ -33,7 +33,7 @@ import { SeoService } from '../../core/services/seo.service';
   `,
   styles: [`
     .legal {
-      padding: 48px 0 80px;
+      padding-top: 48px; padding-bottom: 80px;
       max-width: 720px;
 
       h1 { font-size: 2rem; margin-bottom: 8px; }
