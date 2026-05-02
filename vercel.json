@@ -2,6 +2,7 @@
   "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npx nx build web --configuration=production",
   "outputDirectory": "dist/apps/web/browser",
+  "ignoreCommand": "! git diff HEAD^ HEAD --name-only | grep -qE '^apps/web|^vercel\\.json|^package'",
   "rewrites": [
     {
       "source": "/api/:path*",
