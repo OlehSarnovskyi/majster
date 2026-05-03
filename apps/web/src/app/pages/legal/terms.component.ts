@@ -22,7 +22,9 @@ import { SeoService } from '../../core/services/seo.service';
       <p>Majstri môžu bezplatne pridávať služby a prijímať rezervácie. Majstri sú zodpovední za kvalitu poskytovaných služieb a presnosť uvedených informácií.</p>
 
       <h2>5. Zodpovednosť</h2>
-      <p>Majster.sk je sprostredkovateľská platforma. Nenesieme zodpovednosť za kvalitu služieb poskytovaných majstrami ani za škody vzniknuté v súvislosti s poskytnutými službami.</p>
+      <p>Majster.sk je výlučne sprostredkovateľská platforma, ktorá spája klientov s nezávislými poskytovateľmi služieb (majstrami). Majster.sk nie je zmluvnou stranou dohody medzi klientom a majstrom.</p>
+      <p>Nenesieme zodpovednosť za: kvalitu, bezpečnosť ani výsledok poskytnutých služieb; škody na majetku alebo zdraví vzniknuté v súvislosti s poskytnutými službami; pravdivosť informácií uvedených majstrami v ich profiloch; nedodržanie termínov alebo zrušenie rezervácií zo strany majstra.</p>
+      <p>Majstri sú nezávislými podnikateľmi, nie zamestnancami ani zástupcami platformy Majster.sk.</p>
 
       <h2>6. Zrušenie účtu</h2>
       <p>Účet môžete kedykoľvek zrušiť. Po zrušení budú vaše údaje vymazané v súlade so Zásadami ochrany súkromia.</p>
