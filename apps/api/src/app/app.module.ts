@@ -11,6 +11,7 @@ import { BookingsModule } from '../bookings/bookings.module';
 import { MastersModule } from '../masters/masters.module';
 import { OriginMiddleware } from '../common/middleware/origin.middleware';
 import { EmailModule } from '../email/email.module';
+import { SeedModule } from '../seed/seed.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EmailModule } from '../email/email.module';
       { name: 'auth', ttl: 900000, limit: 10 },   // 10 req/15min (for auth endpoints; login uses stricter @Throttle)
     ]),
     PrismaModule,
+    SeedModule,
     AuthModule,
     EmailModule,
     CategoriesModule,
