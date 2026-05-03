@@ -19,7 +19,7 @@
     </div>
     <div class="hero__stats">
       <div class="hero__stat">
-        <span class="hero__stat-number">10+</span>
+        <span class="hero__stat-number">14+</span>
         <span class="hero__stat-label">Kategórií</span>
       </div>
       <div class="hero__stat">
@@ -42,7 +42,7 @@
 
     @if (loading()) {
       <div class="categories__grid">
-        @for (i of [1,2,3,4,5,6]; track i) {
+        @for (i of [1,2,3,4,5,6,7,8]; track i) {
           <div class="category-card skeleton" style="height: 140px"></div>
         }
       </div>
@@ -58,6 +58,14 @@
           </a>
         }
       </div>
+      @if (hasMore()) {
+        <div class="categories__more">
+          <a routerLink="/categories" class="btn btn--ghost">
+            <span class="material-icons-outlined">grid_view</span>
+            Všetky kategórie
+          </a>
+        </div>
+      }
     }
   </div>
 </section>

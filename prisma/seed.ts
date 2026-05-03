@@ -13,6 +13,10 @@ const categories = [
   { name: 'Záhradníctvo', slug: 'zahradnictvo', icon: 'yard' },
   { name: 'Zámočníctvo', slug: 'zamocnictvo', icon: 'lock' },
   { name: 'Oprava spotrebičov', slug: 'oprava-spotrebicov', icon: 'home_repair_service' },
+  { name: 'Starostlivosť o zvieratá', slug: 'starostlivost-o-zvierata', icon: 'pets' },
+  { name: 'Opatrovateľstvo', slug: 'opatrovatelstvo', icon: 'elderly' },
+  { name: 'IT a počítače', slug: 'it-a-pocitace', icon: 'computer' },
+  { name: 'Doučovanie', slug: 'doucovanie', icon: 'school' },
 ];
 
 async function main() {

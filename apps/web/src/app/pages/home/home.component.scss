@@ -86,9 +86,16 @@
   padding: 60px 0;
 
   &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 16px;
+  }
+
+  &__more {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
   }
 }
 
@@ -100,6 +107,7 @@
   text-decoration: none;
   text-align: center;
   cursor: pointer;
+  flex: 0 0 180px;
 
   &__icon {
     width: 56px;
@@ -211,8 +219,8 @@
     }
   }
 
-  .categories__grid {
-    grid-template-columns: repeat(2, 1fr);
+  .category-card {
+    flex: 0 0 calc(50% - 8px);
   }
 
   .steps {
@@ -222,6 +230,10 @@
 }
 
 @media (max-width: 480px) {
+  .category-card {
+    flex: 0 0 calc(50% - 8px);
+  }
+
   .steps {
     grid-template-columns: 1fr;
   }
