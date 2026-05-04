@@ -5,9 +5,9 @@ WORKDIR /app
 # OpenSSL required by Prisma
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# Install all deps (including devDeps needed for build)
+# Install deps and clean cache immediately to avoid BuildKit overlay issues
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm cache clean --force
 
 # Copy source
 COPY . .
@@ -15,8 +15,7 @@ COPY . .
 # Generate Prisma client for the target platform
 RUN npx prisma generate
 
-# Build Angular frontend + NestJS backend
-RUN npx nx build web --configuration=production
+# Build NestJS backend only (frontend is on Vercel)
 RUN npx nx build api --configuration=production
 
 # ---- Stage 2: Production image ----
@@ -30,20 +29,17 @@ ENV NODE_ENV=production
 # NestJS API bundle
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 
-# Angular static build (served by NestJS)
-COPY --from=builder /app/dist/apps/web/browser ./dist/apps/web/browser
-
-# Runtime deps: node_modules (includes prisma client + all npm packages)
+# Runtime deps
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Prisma schema + migrations
+# Prisma schema + migrations (used by migrate deploy in main.ts)
 COPY --from=builder /app/prisma ./prisma
 
-# Create uploads dir for avatars (ephemeral in container — use S3 in future)
+# Create uploads dir for avatars
 RUN mkdir -p uploads/avatars
 
 EXPOSE 3000
 
-# Run DB migrations then start the server
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node_modules/.bin/tsx prisma/seed.ts && node apps/api/dist/main.js"]
+# migrate deploy + seed run automatically on startup via main.ts and SeedService
+CMD ["node", "apps/api/dist/main.js"]
