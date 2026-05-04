@@ -152,10 +152,12 @@ export class ProfileComponent implements OnInit {
   }
 
   get canSave(): boolean {
+    const bioOk = !this.auth.isMaster() || this.bio.length === 0 || this.bio.length >= 10;
     return (
       this.firstName.length >= 2 &&
       this.lastName.length >= 2 &&
-      this.phoneError === ''
+      this.phoneError === '' &&
+      bioOk
     );
   }
 

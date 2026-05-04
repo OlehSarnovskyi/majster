@@ -57,6 +57,11 @@ export class UpdateRoleDto {
   phone?: string;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  city?: string;
+
+  @IsOptional()
   @ValidateNested()
   @Type(() => WorkingHoursDto)
   workingHours?: WorkingHoursDto;

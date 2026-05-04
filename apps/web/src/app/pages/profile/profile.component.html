@@ -104,10 +104,13 @@
 
           <!-- Bio (masters only) -->
           @if (auth.isMaster()) {
-            <div class="form-field">
+            <div class="form-field" [class.form-field--error]="bio.length > 0 && bio.length < 10">
               <label class="form-field__label" for="profile-bio">O mne</label>
               <textarea id="profile-bio" class="form-field__input" [(ngModel)]="bio" rows="4"
                 placeholder="Povedzte klientom o sebe a svojich skúsenostiach..."></textarea>
+              @if (bio.length > 0 && bio.length < 10) {
+                <span class="form-field__error">Minimálne 10 znakov</span>
+              }
             </div>
           }
 

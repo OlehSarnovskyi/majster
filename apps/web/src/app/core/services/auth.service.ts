@@ -71,9 +71,9 @@ export class AuthService {
     this._userLoaded = this.loadUser();
   }
 
-  updateRole(role: string, phone?: string, workingHours?: WorkingHours) {
+  updateRole(role: string, phone?: string, city?: string, workingHours?: WorkingHours) {
     return this.http
-      .patch<AuthResponse>('/api/auth/role', { role, ...(phone && { phone }), ...(workingHours && { workingHours }) })
+      .patch<AuthResponse>('/api/auth/role', { role, ...(phone && { phone }), ...(city && { city }), ...(workingHours && { workingHours }) })
       .pipe(tap((res) => this.handleAuth(res)));
   }
 

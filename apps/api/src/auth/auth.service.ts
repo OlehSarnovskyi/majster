@@ -138,7 +138,7 @@ export class AuthService {
     return { ...this.buildAuthResponse(user), isNewUser };
   }
 
-  async updateRole(userId: string, role: Role, phone?: string, workingHours?: object) {
+  async updateRole(userId: string, role: Role, phone?: string, city?: string, workingHours?: object) {
     const existing = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!existing) throw new UnauthorizedException();
     if (existing.roleChosen) throw new ConflictException('Role already set');
@@ -146,6 +146,9 @@ export class AuthService {
     const resolvedPhone = phone?.trim() || existing.phone?.trim();
     if (role === Role.MASTER && !resolvedPhone) {
       throw new BadRequestException('Telefónne číslo je povinné pre rolu majstra');
+    }
+    if (role === Role.MASTER && !city?.trim()) {
+      throw new BadRequestException('Mesto je povinné pre rolu majstra');
     }
     if (role === Role.MASTER && !workingHours) {
       throw new BadRequestException('Pracovný rozvrh je povinný pre rolu majstra');
@@ -157,6 +160,7 @@ export class AuthService {
         role,
         roleChosen: true,
         ...(resolvedPhone && { phone: resolvedPhone }),
+        ...(city?.trim() && { city: city.trim() }),
         ...(workingHours && { workingHours }),
       },
     });

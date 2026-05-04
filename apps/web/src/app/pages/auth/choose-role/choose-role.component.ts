@@ -49,7 +49,9 @@ function buildTimeOptions(): string[] {
 export class ChooseRoleComponent {
   selectedRole = signal<string | null>(null);
   phone = '';
+  city = '';
   phoneError = '';
+  cityError = '';
   scheduleError = '';
   loading = signal(false);
 
@@ -64,6 +66,7 @@ export class ChooseRoleComponent {
   selectRole(role: string) {
     this.selectedRole.set(role);
     this.phoneError = '';
+    this.cityError = '';
     this.scheduleError = '';
   }
 
@@ -109,16 +112,22 @@ export class ChooseRoleComponent {
         this.phoneError = 'Zadajte platné telefónne číslo (napr. +421 900 123 456)';
         return;
       }
+      if (!this.city.trim()) {
+        this.cityError = 'Mesto je povinné pre majstrov';
+        return;
+      }
     }
 
     if (!this.validateSchedule()) return;
 
     this.phoneError = '';
+    this.cityError = '';
     this.loading.set(true);
     this.auth
       .updateRole(
         role,
         role === 'MASTER' ? this.phone.trim() : undefined,
+        role === 'MASTER' ? this.city.trim() : undefined,
         role === 'MASTER' ? this.workingHours : undefined
       )
       .subscribe({
