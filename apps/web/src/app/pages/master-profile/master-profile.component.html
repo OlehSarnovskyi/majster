@@ -56,7 +56,7 @@
             <p class="hero__bio">{{ bioText(m) }}</p>
             @if (m.bio.length > bioLimit) {
               <button class="btn-link" (click)="toggleBio()">
-                {{ bioExpanded() ? 'Zobraziť menej' : 'Zobraziť viac' }}
+                <span>{{ bioExpanded() ? 'Zobraziť menej' : 'Zobraziť viac' }}</span>
                 <span class="material-icons-outlined">{{ bioExpanded() ? 'expand_less' : 'expand_more' }}</span>
               </button>
             }
