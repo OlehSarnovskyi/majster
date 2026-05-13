@@ -1,8 +1,8 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
-import { WorkingHours, DaySchedule } from '../../../core/services/api.service';
+import { ApiService, City, WorkingHours, DaySchedule } from '../../../core/services/api.service';
 
 const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 type DayKey = (typeof DAY_KEYS)[number];
@@ -46,14 +46,15 @@ function buildTimeOptions(): string[] {
   templateUrl: './choose-role.component.html',
   styleUrl: './choose-role.component.scss',
 })
-export class ChooseRoleComponent {
+export class ChooseRoleComponent implements OnInit {
   selectedRole = signal<string | null>(null);
   phone = '';
-  city = '';
+  cityId = '';
   phoneError = '';
   cityError = '';
   scheduleError = '';
   loading = signal(false);
+  cities = signal<City[]>([]);
 
   readonly dayKeys = DAY_KEYS;
   readonly dayLabels = DAY_LABELS;
@@ -61,7 +62,12 @@ export class ChooseRoleComponent {
   workingHours: WorkingHours = defaultWorkingHours();
 
   private auth = inject(AuthService);
+  private api  = inject(ApiService);
   private router = inject(Router);
+
+  ngOnInit() {
+    this.api.getCities().subscribe((c) => this.cities.set(c));
+  }
 
   selectRole(role: string) {
     this.selectedRole.set(role);
@@ -112,7 +118,7 @@ export class ChooseRoleComponent {
         this.phoneError = 'Zadajte platné telefónne číslo (napr. +421 900 123 456)';
         return;
       }
-      if (!this.city.trim()) {
+      if (!this.cityId) {
         this.cityError = 'Mesto je povinné pre majstrov';
         return;
       }
@@ -127,7 +133,7 @@ export class ChooseRoleComponent {
       .updateRole(
         role,
         role === 'MASTER' ? this.phone.trim() : undefined,
-        role === 'MASTER' ? this.city.trim() : undefined,
+        role === 'MASTER' ? this.cityId : undefined,
         role === 'MASTER' ? this.workingHours : undefined
       )
       .subscribe({

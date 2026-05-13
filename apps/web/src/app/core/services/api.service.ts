@@ -1,6 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+export interface City {
+  id: string;
+  name: string;
+  slug: string;
+  country: string;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -31,7 +38,7 @@ export interface Master {
   lastName: string;
   avatar: string | null;
   bio: string | null;
-  city?: string | null;
+  city?: City | null;
   createdAt?: string;
   phone?: string | null; // returned only in booking context (PENDING/CONFIRMED), never on public profile
   workingHours?: WorkingHours | null;
@@ -47,7 +54,7 @@ export interface PublicMaster {
   lastName: string;
   avatar: string | null;
   bio: string | null;
-  city: string | null;
+  city: City | null;
   masterProfile: { slug: string } | null;
   _count: { services: number };
 }
@@ -65,7 +72,7 @@ export interface MasterProfile {
     lastName: string;
     avatar: string | null;
     bio: string | null;
-    city: string | null;
+    city: City | null;
     workingHours: WorkingHours | null;
     timezone: string;
     services: Service[];
@@ -153,6 +160,11 @@ export class ApiService {
 
   deleteService(id: string) {
     return this.http.delete(`/api/services/${id}`);
+  }
+
+  // Cities
+  getCities() {
+    return this.http.get<City[]>('/api/masters/cities');
   }
 
   // Masters

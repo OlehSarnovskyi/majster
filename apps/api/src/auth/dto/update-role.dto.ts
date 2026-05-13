@@ -1,4 +1,7 @@
-import { IsEnum, IsOptional, IsString, MaxLength, IsBoolean, ValidateNested } from 'class-validator';
+import {
+  IsEnum, IsOptional, IsString, MaxLength,
+  IsBoolean, ValidateNested, IsUUID,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export enum RoleDto {
@@ -18,33 +21,13 @@ export class DayScheduleDto {
 }
 
 export class WorkingHoursDto {
-  @ValidateNested()
-  @Type(() => DayScheduleDto)
-  mon: DayScheduleDto;
-
-  @ValidateNested()
-  @Type(() => DayScheduleDto)
-  tue: DayScheduleDto;
-
-  @ValidateNested()
-  @Type(() => DayScheduleDto)
-  wed: DayScheduleDto;
-
-  @ValidateNested()
-  @Type(() => DayScheduleDto)
-  thu: DayScheduleDto;
-
-  @ValidateNested()
-  @Type(() => DayScheduleDto)
-  fri: DayScheduleDto;
-
-  @ValidateNested()
-  @Type(() => DayScheduleDto)
-  sat: DayScheduleDto;
-
-  @ValidateNested()
-  @Type(() => DayScheduleDto)
-  sun: DayScheduleDto;
+  @ValidateNested() @Type(() => DayScheduleDto) mon: DayScheduleDto;
+  @ValidateNested() @Type(() => DayScheduleDto) tue: DayScheduleDto;
+  @ValidateNested() @Type(() => DayScheduleDto) wed: DayScheduleDto;
+  @ValidateNested() @Type(() => DayScheduleDto) thu: DayScheduleDto;
+  @ValidateNested() @Type(() => DayScheduleDto) fri: DayScheduleDto;
+  @ValidateNested() @Type(() => DayScheduleDto) sat: DayScheduleDto;
+  @ValidateNested() @Type(() => DayScheduleDto) sun: DayScheduleDto;
 }
 
 export class UpdateRoleDto {
@@ -56,10 +39,10 @@ export class UpdateRoleDto {
   @MaxLength(20)
   phone?: string;
 
+  /** UUID of a City row — required for MASTER, optional for CLIENT */
   @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  city?: string;
+  @IsUUID()
+  cityId?: string;
 
   @IsOptional()
   @ValidateNested()

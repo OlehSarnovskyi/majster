@@ -30,11 +30,10 @@ export class UpdateProfileDto {
   @MaxLength(1000)
   bio?: string;
 
+  /** UUID of a City row — optional for all users */
   @IsOptional()
-  @IsString()
-  @Transform(({ value }) => value?.trim() || undefined)
-  @MaxLength(100)
-  city?: string;
+  @IsUUID()
+  cityId?: string;
 
   @IsOptional()
   @IsObject()

@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap, firstValueFrom, catchError, of } from 'rxjs';
-import { WorkingHours } from './api.service';
+import { City, WorkingHours } from './api.service';
 
 export interface User {
   id: string;
@@ -14,7 +14,7 @@ export interface User {
   phone?: string;
   avatar?: string;
   bio?: string;
-  city?: string | null;
+  city?: City | null;
   workingHours?: WorkingHours | null;
 }
 
@@ -78,9 +78,9 @@ export class AuthService {
     this._userLoaded = this.loadUser();
   }
 
-  updateRole(role: string, phone?: string, city?: string, workingHours?: WorkingHours) {
+  updateRole(role: string, phone?: string, cityId?: string, workingHours?: WorkingHours) {
     return this.http
-      .patch<AuthResponse>('/api/auth/role', { role, ...(phone && { phone }), ...(city && { city }), ...(workingHours && { workingHours }) })
+      .patch<AuthResponse>('/api/auth/role', { role, ...(phone && { phone }), ...(cityId && { cityId }), ...(workingHours && { workingHours }) })
       .pipe(tap((res) => this.handleAuth(res)));
   }
 
@@ -89,7 +89,7 @@ export class AuthService {
     lastName?: string;
     phone?: string;
     bio?: string;
-    city?: string;
+    cityId?: string;
     workingHours?: WorkingHours;
   }) {
     return this.http

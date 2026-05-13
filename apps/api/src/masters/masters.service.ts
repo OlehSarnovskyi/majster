@@ -26,7 +26,7 @@ const PROFILE_SELECT = {
       lastName: true,
       avatar: true,
       bio: true,
-      city: true,
+      city: { select: { id: true, name: true, slug: true } },
       workingHours: true,
       timezone: true,
       services: {
@@ -50,7 +50,10 @@ export class MastersService {
     };
 
     if (filters?.city) {
-      where.city = { equals: filters.city, mode: 'insensitive' };
+      const citySlug = filters.city.toLowerCase();
+      const city = await this.prisma.city.findUnique({ where: { slug: citySlug } });
+      if (!city) throw new NotFoundException(`City '${citySlug}' not found`);
+      where.cityId = city.id;
     }
 
     if (filters?.search) {
@@ -69,7 +72,7 @@ export class MastersService {
         lastName: true,
         avatar: true,
         bio: true,
-        city: true,
+        city: { select: { id: true, name: true, slug: true } },
         masterProfile: { select: { slug: true } },
         _count: { select: { services: true } },
       },
@@ -78,13 +81,11 @@ export class MastersService {
   }
 
   async findAll_cities() {
-    const masters = await this.prisma.user.findMany({
-      where: { role: Role.MASTER, services: { some: {} }, city: { not: null } },
-      select: { city: true },
-      distinct: ['city'],
-      orderBy: { city: 'asc' },
+    return this.prisma.city.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true, slug: true, country: true },
+      orderBy: { name: 'asc' },
     });
-    return masters.map((m) => m.city).filter(Boolean) as string[];
   }
 
   /**

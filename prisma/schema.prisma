@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model City {
+  id       String  @id @default(uuid())
+  name     String  @unique
+  slug     String  @unique
+  country  String  @default("SK")
+  isActive Boolean @default(true) @map("is_active")
+
+  users User[]
+
+  @@map("cities")
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -17,7 +29,8 @@ model User {
   phone        String?
   avatar       String?
   bio          String?
-  city         String?
+  cityId       String? @map("city_id")
+  city         City?   @relation(fields: [cityId], references: [id])
   workingHours Json?   @map("working_hours")
   timezone     String  @default("Europe/Bratislava")
   role      Role     @default(CLIENT)

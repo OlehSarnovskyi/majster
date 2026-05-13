@@ -4,7 +4,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { SeoService } from '../../core/services/seo.service';
 import { ToastService } from '../../core/services/toast.service';
 import { ConfirmService } from '../../core/services/confirm.service';
-import { WorkingHours, DaySchedule } from '../../core/services/api.service';
+import { ApiService, City, WorkingHours, DaySchedule } from '../../core/services/api.service';
 
 const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 type DayKey = (typeof DAY_KEYS)[number];
@@ -52,12 +52,13 @@ export class ProfileComponent implements OnInit {
   saved = signal(false);
   uploadingAvatar = signal(false);
   avatarPreview = signal<string | null>(null);
+  cities = signal<City[]>([]);
 
   firstName = '';
   lastName = '';
   phone = '';
   bio = '';
-  city = '';
+  cityId = '';
 
   readonly dayKeys = DAY_KEYS;
   readonly dayLabels = DAY_LABELS;
@@ -65,6 +66,7 @@ export class ProfileComponent implements OnInit {
   workingHours: WorkingHours = defaultWorkingHours();
 
   auth = inject(AuthService);
+  private api = inject(ApiService);
   private seo = inject(SeoService);
   private toast = inject(ToastService);
   private confirm = inject(ConfirmService);
@@ -76,7 +78,7 @@ export class ProfileComponent implements OnInit {
       this.lastName = u.lastName;
       this.phone = u.phone || '';
       this.bio = u.bio || '';
-      this.city = u.city || '';
+      this.cityId = u.city?.id || '';
       if (u.avatar) {
         this.avatarPreview.set(u.avatar);
       }
@@ -88,6 +90,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.seo.setPage('Upraviť profil');
+    this.api.getCities().subscribe((c) => this.cities.set(c));
   }
 
   getDay(key: DayKey): DaySchedule {
@@ -170,7 +173,7 @@ export class ProfileComponent implements OnInit {
       lastName: this.lastName,
       phone: this.phone || undefined,
       bio: this.bio || undefined,
-      city: this.city || undefined,
+      cityId: this.cityId || undefined,
     };
 
     if (this.auth.isMaster()) {

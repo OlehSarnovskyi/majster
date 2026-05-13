@@ -33,7 +33,7 @@
           <div class="hero__chips">
             @if (p.user.city) {
               <span class="chip">
-                <span class="material-icons-outlined">location_on</span>{{ p.user.city }}
+                <span class="material-icons-outlined">location_on</span>{{ p.user.city?.name }}
               </span>
             }
             <span class="chip">

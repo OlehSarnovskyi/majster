@@ -13,6 +13,23 @@ import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../email/email.service';
 import { Role } from '@prisma/client';
 
+// Reused in every user query that needs to build an auth response
+const CITY_SELECT = { select: { id: true, name: true, slug: true } } as const;
+
+const USER_AUTH_SELECT = {
+  id: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  phone: true,
+  avatar: true,
+  bio: true,
+  city: CITY_SELECT,
+  role: true,
+  roleChosen: true,
+  workingHours: true,
+} as const;
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -71,6 +88,7 @@ export class AuthService {
   async login(dto: { email: string; password: string }) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
+      include: { city: true },
     });
 
     if (!user || !user.password) {
@@ -101,20 +119,19 @@ export class AuthService {
 
     let user = await this.prisma.user.findUnique({
       where: { googleId: googleUser.googleId },
+      include: { city: true },
     });
 
     if (!user) {
-      user = await this.prisma.user.findUnique({
+      const byEmail = await this.prisma.user.findUnique({
         where: { email: googleUser.email },
       });
 
-      if (user) {
+      if (byEmail) {
         user = await this.prisma.user.update({
-          where: { id: user.id },
-          data: {
-            googleId: googleUser.googleId,
-            avatar: googleUser.avatar,
-          },
+          where: { id: byEmail.id },
+          data: { googleId: googleUser.googleId, avatar: googleUser.avatar },
+          include: { city: true },
         });
       } else {
         isNewUser = true;
@@ -127,6 +144,7 @@ export class AuthService {
             avatar: googleUser.avatar,
             emailVerified: true, // Google already verified the email
           },
+          include: { city: true },
         });
         // Send welcome email async — don't block login if it fails
         this.emailService
@@ -138,7 +156,7 @@ export class AuthService {
     return { ...this.buildAuthResponse(user), isNewUser };
   }
 
-  async updateRole(userId: string, role: Role, phone?: string, city?: string, workingHours?: object) {
+  async updateRole(userId: string, role: Role, phone?: string, cityId?: string, workingHours?: object) {
     const existing = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!existing) throw new UnauthorizedException();
     if (existing.roleChosen) throw new ConflictException('Role already set');
@@ -147,11 +165,17 @@ export class AuthService {
     if (role === Role.MASTER && !resolvedPhone) {
       throw new BadRequestException('Telefónne číslo je povinné pre rolu majstra');
     }
-    if (role === Role.MASTER && !city?.trim()) {
+    if (role === Role.MASTER && !cityId) {
       throw new BadRequestException('Mesto je povinné pre rolu majstra');
     }
     if (role === Role.MASTER && !workingHours) {
       throw new BadRequestException('Pracovný rozvrh je povinný pre rolu majstra');
+    }
+
+    // Validate cityId exists
+    if (cityId) {
+      const city = await this.prisma.city.findUnique({ where: { id: cityId } });
+      if (!city) throw new BadRequestException('Vybrané mesto neexistuje');
     }
 
     const user = await this.prisma.user.update({
@@ -160,33 +184,28 @@ export class AuthService {
         role,
         roleChosen: true,
         ...(resolvedPhone && { phone: resolvedPhone }),
-        ...(city?.trim() && { city: city.trim() }),
+        ...(cityId && { cityId }),
         ...(workingHours && { workingHours }),
       },
+      include: { city: true },
     });
     return this.buildAuthResponse(user);
   }
 
   async updateProfile(
     userId: string,
-    dto: { firstName?: string; lastName?: string; phone?: string; bio?: string; city?: string; workingHours?: object }
+    dto: { firstName?: string; lastName?: string; phone?: string; bio?: string; cityId?: string; workingHours?: object }
   ) {
+    // Validate cityId if provided
+    if (dto.cityId) {
+      const city = await this.prisma.city.findUnique({ where: { id: dto.cityId } });
+      if (!city) throw new BadRequestException('Vybrané mesto neexistuje');
+    }
+
     return this.prisma.user.update({
       where: { id: userId },
       data: dto,
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        avatar: true,
-        bio: true,
-        city: true,
-        role: true,
-        roleChosen: true,
-        workingHours: true,
-      },
+      select: USER_AUTH_SELECT,
     });
   }
 
@@ -208,38 +227,14 @@ export class AuthService {
     return this.prisma.user.update({
       where: { id: userId },
       data: { avatar: avatarUrl },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        avatar: true,
-        bio: true,
-        city: true,
-        role: true,
-        roleChosen: true,
-        workingHours: true,
-      },
+      select: USER_AUTH_SELECT,
     });
   }
 
   async validateUser(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        avatar: true,
-        bio: true,
-        city: true,
-        role: true,
-        roleChosen: true,
-        workingHours: true,
-      },
+      select: USER_AUTH_SELECT,
     });
   }
 
@@ -348,7 +343,7 @@ export class AuthService {
     lastName: string;
     role: string;
     roleChosen: boolean;
-    city?: string | null;
+    city?: { id: string; name: string; slug: string } | null;
     workingHours?: unknown;
   }) {
     const payload = { sub: user.id, email: user.email, role: user.role };
