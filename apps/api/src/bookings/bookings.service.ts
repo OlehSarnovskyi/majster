@@ -11,6 +11,40 @@ import { EmailService } from '../email/email.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { BookingStatus } from '@prisma/client';
 
+// ─── Timezone helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Working hours stored in the DB use the master's local time (Slovakia,
+ * Europe/Bratislava). The incoming startTime is always UTC (ISO string from
+ * the frontend). We must convert UTC → local before comparing with working
+ * hours, otherwise bookings near midnight shift to the wrong day.
+ */
+const MASTER_TIMEZONE = 'Europe/Bratislava';
+
+const WEEKDAY_SHORT: Record<string, string> = {
+  Sun: 'sun', Mon: 'mon', Tue: 'tue', Wed: 'wed',
+  Thu: 'thu', Fri: 'fri', Sat: 'sat',
+};
+
+function getLocalTimeParts(utcDate: Date): { dayKey: string; slotTime: string } {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: MASTER_TIMEZONE,
+    weekday: 'short',   // 'Mon', 'Tue', …
+    hour:    '2-digit',
+    minute:  '2-digit',
+    hour12:  false,
+  }).formatToParts(utcDate);
+
+  const weekday = parts.find((p) => p.type === 'weekday')?.value ?? 'Mon';
+  const hour    = parts.find((p) => p.type === 'hour')?.value   ?? '00';
+  const minute  = parts.find((p) => p.type === 'minute')?.value ?? '00';
+
+  return {
+    dayKey:   WEEKDAY_SHORT[weekday] ?? 'mon',
+    slotTime: `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`,
+  };
+}
+
 // ─── Prisma result types ──────────────────────────────────────────────────────
 
 // The shape returned by booking queries that include service, client, master.
@@ -78,15 +112,15 @@ export class BookingsService {
     > | null;
 
     if (workingHours) {
-      const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-      const dayKey = dayNames[startTime.getDay()];
+      // Convert UTC startTime → Slovakia local time before comparing with
+      // working-hours config (which is stored in local time).
+      const { dayKey, slotTime } = getLocalTimeParts(startTime);
       const day = workingHours[dayKey];
 
       if (!day?.enabled) {
         throw new BadRequestException('Time slot is outside master working hours');
       }
 
-      const slotTime = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`;
       if (slotTime < day.from || slotTime >= day.to) {
         throw new BadRequestException('Time slot is outside master working hours');
       }

@@ -25,6 +25,10 @@ WORKDIR /app
 RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
+# Force UTC on the server so that Date operations, Prisma, and PostgreSQL
+# all agree on the same timezone. Without this, getHours() / getDay() etc.
+# can differ from the stored UTC timestamps and break time-range validation.
+ENV TZ=UTC
 
 # NestJS API bundle
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
