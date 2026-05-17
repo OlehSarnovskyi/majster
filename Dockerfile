@@ -16,7 +16,7 @@ COPY . .
 RUN npx prisma generate
 
 # Build NestJS backend only (frontend is on Vercel)
-RUN npx nx build api --configuration=production
+RUN npx nx build api --configuration=production --skip-sync
 
 # ---- Stage 2: Production image ----
 FROM node:22-slim AS runner
