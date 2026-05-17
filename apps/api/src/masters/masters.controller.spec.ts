@@ -7,6 +7,7 @@ import { MastersService } from './masters.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard, ROLES_KEY } from '../auth/roles.guard';
 import { PrismaService } from '../prisma/prisma.service';
+import { ReviewsService } from '../reviews/reviews.service';
 
 // ─── Mock factories ──────────────────────────────────────────────────────────
 
@@ -18,6 +19,11 @@ function createPrismaMock() {
       findMany: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+    },
+    city: { findUnique: jest.fn(), findMany: jest.fn() },
+    serviceCategory: { findUnique: jest.fn(), findMany: jest.fn() },
+    review: {
+      aggregate: jest.fn().mockResolvedValue({ _avg: { rating: null }, _count: { rating: 0 } }),
     },
   };
 }
@@ -99,6 +105,10 @@ async function buildApp(
       MastersService,
       Reflector,
       { provide: PrismaService, useValue: prismaMock },
+      {
+        provide: ReviewsService,
+        useValue: { findByMaster: jest.fn().mockResolvedValue([]) },
+      },
     ],
   })
     .overrideGuard(JwtAuthGuard)
@@ -138,10 +148,14 @@ describe('MastersController', () => {
 
   describe('GET /masters/cities', () => {
     it('returns distinct cities', async () => {
-      prisma.user.findMany.mockResolvedValue([{ city: 'Bratislava' }, { city: 'Košice' }]);
+      const cityRows = [
+        { id: 'city-1', name: 'Bratislava', slug: 'bratislava', country: 'SK' },
+        { id: 'city-2', name: 'Košice',     slug: 'kosice',     country: 'SK' },
+      ];
+      prisma.city.findMany.mockResolvedValue(cityRows);
       const app = await buildApp(prisma);
       const res = await supertest(app.getHttpServer()).get('/masters/cities').expect(200);
-      expect(res.body).toEqual(['Bratislava', 'Košice']);
+      expect(res.body).toEqual(cityRows);
       await app.close();
     });
   });

@@ -108,7 +108,7 @@
                 </div>
 
                 <!-- Row 4: estimated price -->
-                @if (b.estimatedPrice != null) {
+                @if (b.estimatedPrice !== null) {
                   <p class="booking-card__price">
                     <span class="material-icons-outlined">payments</span>
                     Orientačná cena: <strong>{{ b.estimatedPrice | number:'1.2-2' }} €</strong>
@@ -190,17 +190,17 @@
                 </div>
 
                 <!-- Price display -->
-                @if (b.status === 'COMPLETED' && (b.actualPrice != null || b.estimatedPrice != null)) {
+                @if (b.status === 'COMPLETED' && (b.actualPrice !== null || b.estimatedPrice !== null)) {
                   <p class="booking-card__price">
                     <span class="material-icons-outlined">payments</span>
-                    @if (b.actualPrice != null) {
+                    @if (b.actualPrice !== null) {
                       Konečná cena: <strong>{{ b.actualPrice | number:'1.2-2' }} €</strong>
-                    } @else if (b.estimatedPrice != null) {
+                    } @else if (b.estimatedPrice !== null) {
                       Orientačná cena: <strong>{{ b.estimatedPrice | number:'1.2-2' }} €</strong>
                       <span class="booking-card__price-note">(konečná cena nebola uvedená)</span>
                     }
                   </p>
-                } @else if (b.estimatedPrice != null) {
+                } @else if (b.estimatedPrice !== null) {
                   <p class="booking-card__price">
                     <span class="material-icons-outlined">payments</span>
                     Orientačná cena: <strong>{{ b.estimatedPrice | number:'1.2-2' }} €</strong>
@@ -430,10 +430,10 @@
             <!-- Specialization categories -->
             <div class="form-field mt-2">
               <div class="cat-section-header">
-                <label class="form-field__label">
+                <span class="form-field__label">
                   <span class="material-icons-outlined" style="font-size:16px;vertical-align:-3px">category</span>
                   Špecializácia
-                </label>
+                </span>
                 @if (!editingCategories()) {
                   <button class="btn btn--ghost btn--sm" (click)="openCategoryEdit()">
                     <span class="material-icons-outlined">edit</span> Zmeniť

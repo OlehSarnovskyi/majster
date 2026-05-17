@@ -17,8 +17,9 @@ const PAGE_SIZE = 20;
 
     <div class="data-table-wrapper">
       <div class="filters-bar">
-        <label style="font-size: 0.875rem; color: var(--color-text-light);">Min rating:</label>
+        <label for="minRating" style="font-size: 0.875rem; color: var(--color-text-light);">Min rating:</label>
         <select
+          id="minRating"
           class="form-control"
           style="max-width: 100px"
           [(ngModel)]="minRating"
@@ -32,8 +33,9 @@ const PAGE_SIZE = 20;
           <option value="5">5 ★</option>
         </select>
 
-        <label style="font-size: 0.875rem; color: var(--color-text-light);">Max rating:</label>
+        <label for="maxRating" style="font-size: 0.875rem; color: var(--color-text-light);">Max rating:</label>
         <select
+          id="maxRating"
           class="form-control"
           style="max-width: 100px"
           [(ngModel)]="maxRating"
