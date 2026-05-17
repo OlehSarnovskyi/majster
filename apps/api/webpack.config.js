@@ -2,7 +2,7 @@ const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
 const { join } = require('path');
 
 module.exports = {
-  externals: [/^@prisma\/client$/, /^\.prisma/],
+  externals: [/^@prisma\/client$/, /^\.prisma/, 'class-validator', 'class-transformer'],
   output: {
     path: join(__dirname, 'dist'),
     clean: true,
