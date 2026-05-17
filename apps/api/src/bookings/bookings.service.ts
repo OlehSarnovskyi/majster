@@ -170,7 +170,10 @@ export class BookingsService {
       },
     });
 
-    this.emailService.sendNewBookingNotification(booking).catch((err) =>
+    this.emailService.sendNewBookingNotification({
+      ...booking,
+      service: { name: booking.service?.name ?? 'Neznáma služba' },
+    }).catch((err) =>
       this.logger.error('Failed to send new booking notification', err)
     );
 
@@ -330,7 +333,10 @@ export class BookingsService {
       },
     });
 
-    this.emailService.sendBookingStatusUpdate(updated).catch((err) =>
+    this.emailService.sendBookingStatusUpdate({
+      ...updated,
+      service: { name: updated.service?.name ?? 'Neznáma služba' },
+    }).catch((err) =>
       this.logger.error('Failed to send booking status update email', err)
     );
 

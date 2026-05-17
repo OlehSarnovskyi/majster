@@ -113,13 +113,13 @@ export interface Review {
 export interface ReviewWithClient extends Review {
   booking: {
     client: { id: string; firstName: string; lastName: string; avatar: string | null };
-    service: { name: string };
+    service: { name: string } | null;
   };
 }
 
 export interface Booking {
   id: string;
-  serviceId: string;
+  serviceId: string | null;
   clientId: string;
   masterId: string;
   startTime: string;
@@ -131,7 +131,7 @@ export interface Booking {
   estimatedPrice: number | null;
   /** Final price entered by master on COMPLETED. null if not provided. */
   actualPrice: number | null;
-  service: Service;
+  service: Service | null;
   client?: { id: string; firstName: string; lastName: string; email?: string | null; phone?: string | null };
   master?: Master;
   review?: Review | null;

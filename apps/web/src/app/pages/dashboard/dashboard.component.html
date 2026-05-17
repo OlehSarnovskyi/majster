@@ -70,7 +70,7 @@
 
                 <!-- Row 1: service + status -->
                 <div class="booking-card__top">
-                  <h3 class="booking-card__title">{{ b.service.name }}</h3>
+                  <h3 class="booking-card__title">{{ b.service?.name ?? 'Zmazaná služba' }}</h3>
                   <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
                 </div>
 
@@ -140,7 +140,7 @@
 
                 <!-- Row 1: service + status -->
                 <div class="booking-card__top">
-                  <h3 class="booking-card__title">{{ b.service.name }}</h3>
+                  <h3 class="booking-card__title">{{ b.service?.name ?? 'Zmazaná služba' }}</h3>
                   <span [class]="statusClass(b.status)">{{ statusLabel(b.status) }}</span>
                 </div>
 

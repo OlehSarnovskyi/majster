@@ -15,11 +15,11 @@ export class ServicesService {
 
   /** Ensure the categoryId belongs to the master's chosen specializations. */
   private async assertCategoryInSpec(masterId: string, categoryId: string) {
-    const profile = await this.prisma.masterProfile.findUnique({
-      where: { userId: masterId },
+    const user = await this.prisma.user.findUnique({
+      where: { id: masterId },
       select: { masterCategories: { select: { categoryId: true } } },
     });
-    const allowed = profile?.masterCategories.map((mc) => mc.categoryId) ?? [];
+    const allowed = user?.masterCategories.map((mc) => mc.categoryId) ?? [];
     if (!allowed.includes(categoryId)) {
       throw new BadRequestException(
         'Kategória musí byť jednou z vašich špecializácií'

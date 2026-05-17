@@ -136,7 +136,7 @@
                     <span class="text-muted review-card__date">{{ r.createdAt | date:'dd.MM.yyyy' }}</span>
                   </div>
                 </div>
-                <p class="review-card__service text-muted">{{ r.booking.service.name }}</p>
+                <p class="review-card__service text-muted">{{ r.booking.service?.name ?? 'Zmazaná služba' }}</p>
                 @if (r.comment) {
                   <p class="review-card__comment">{{ r.comment }}</p>
                 }

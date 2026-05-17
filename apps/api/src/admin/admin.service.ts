@@ -146,7 +146,7 @@ export class AdminService {
         ...b,
         estimatedPrice: b.estimatedPrice != null ? Number(b.estimatedPrice) : null,
         actualPrice:    b.actualPrice    != null ? Number(b.actualPrice)    : null,
-        service: { ...b.service, price: Number(b.service.price) },
+        service: b.service ? { ...b.service, price: Number(b.service.price) } : null,
       })),
       total, page, limit,
     };

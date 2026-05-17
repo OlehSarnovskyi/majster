@@ -261,16 +261,20 @@ export class DashboardComponent implements OnInit {
   }
 
   addToGoogleCalendar(b: Booking) {
+    const serviceName = b.service?.name ?? 'Rezervácia';
+    const durationMs = (b.service?.durationMinutes ?? 60) * 60000;
     const start = new Date(b.startTime);
-    const end = new Date(start.getTime() + b.service.durationMinutes * 60000);
+    const end = new Date(start.getTime() + durationMs);
     const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(b.service.name)}&dates=${fmt(start)}/${fmt(end)}${b.note ? '&details=' + encodeURIComponent(b.note) : ''}`;
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(serviceName)}&dates=${fmt(start)}/${fmt(end)}${b.note ? '&details=' + encodeURIComponent(b.note) : ''}`;
     window.open(url, '_blank');
   }
 
   downloadIcs(b: Booking) {
+    const serviceName = b.service?.name ?? 'Rezervácia';
+    const durationMs = (b.service?.durationMinutes ?? 60) * 60000;
     const start = new Date(b.startTime);
-    const end = new Date(start.getTime() + b.service.durationMinutes * 60000);
+    const end = new Date(start.getTime() + durationMs);
     const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
     const escapeIcs = (s: string) => s.replace(/[\\;,\n]/g, (m) => m === '\n' ? '\\n' : '\\' + m);
     const ics = [
@@ -280,7 +284,7 @@ export class DashboardComponent implements OnInit {
       'BEGIN:VEVENT',
       `DTSTART:${fmt(start)}`,
       `DTEND:${fmt(end)}`,
-      `SUMMARY:${escapeIcs(b.service.name)}`,
+      `SUMMARY:${escapeIcs(serviceName)}`,
       b.note ? `DESCRIPTION:${escapeIcs(b.note)}` : '',
       `UID:${b.id}@majster.sk`,
       'END:VEVENT',
@@ -289,7 +293,7 @@ export class DashboardComponent implements OnInit {
     const blob = new Blob([ics], { type: 'text/calendar' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `${b.service.name}.ics`;
+    a.download = `${serviceName}.ics`;
     a.click();
     URL.revokeObjectURL(a.href);
   }

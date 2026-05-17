@@ -8,9 +8,6 @@
     },
     {
       "path": "./libs/shared"
-    },
-    {
-      "path": "./apps/web"
     }
   ]
 }
